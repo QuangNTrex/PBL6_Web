@@ -41,6 +41,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 # API: Đăng ký
 @router.post("/register", response_model=TokenResponse)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
+    print(user_in)
     # Kiểm tra username hoặc email đã tồn tại chưa
     if db.query(User).filter(User.username == user_in.username).first():
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -77,14 +78,20 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
 
     access_token = create_access_token(data={"sub": str(user.id)})
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": user  # nhờ orm_mode = True nên trả về được object
-    }
+    return LoginResponse(
+        access_token=access_token,
+        user=user
+    )
 
 
 # API: Đăng xuất (client chỉ cần xoá token)
 @router.post("/logout")
 def logout():
     return {"message": "Logout successful. Please remove token on client."}
+
+@router.get("/test") 
+def test():
+    return {
+        "access_token": "access_token",
+
+    }

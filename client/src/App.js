@@ -25,18 +25,26 @@ import ProductDetail from "./pages/client/ProductDetail";
 import CategoryPage from "./pages/client/CategoryPage";
 import Cart from "./pages/client/Cart";
 import Checkout from "./pages/client/Checkout";
+import { useSelector } from "react-redux";
 
 
 function App() {
+  const user = useSelector(state => state.user);
   return (
       <Routes>
         {/* Auth */}
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        
+        <Route element={<ClientLayout />}>
+          
+          <Route path="/" element={<Home />} />
+        </Route>
       
         {/* <Route element={<ClientLayout />}>
-          <Route path="/" element={<Home />} />
+          
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:id" element={<CategoryPage />} />
           <Route path="/cart" element={<Cart />} />

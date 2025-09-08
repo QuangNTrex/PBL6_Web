@@ -4,21 +4,31 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/userSlice";
 import AuthForm from "./AuthForm";
 import authApi from "../../api/authApi";    
+import { useNavigate } from "react-router-dom";
+import { API_URL, SERVERURL } from "../../utils/lib";
 
 function Login() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const access_token = localStorage.getItem("access_token");
   const handleLogin = async (formData) => {
-    const response = await authApi.login(formData);
-    if (!response || response.status !== 200) {
-      console.error("Đăng nhập thất bại:", response ? response.data : "No response");
-      return;
-    }
-    localStorage.setItem("access_token", response.data.access_token);
-    const userData = response.data.user;
+    console.log(formData);
+    fetch(API_URL + "auth/login", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            }).then(res => res.json()).then(data => {
+                console.log(data);
+                dispatch(setUser(data.user));
+                localStorage.setItem("access_token", data.access_token);
+                dispatch(setUser(data.user));
+                navigate("/");
 
-    dispatch(setUser(userData));
-    console.log("Đăng nhập thành công:", userData);
+            }).catch(err => {
+                console.error("Đăng nhập thất bại:", err);
+            })
   };
 
   return <AuthForm type="login" onSubmit={handleLogin} />;

@@ -1,0 +1,23 @@
+.category-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.category-card {
+  width: 120px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.category-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.category-card:hover {
+  transform: scale(1.05);
+}

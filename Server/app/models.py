@@ -1,4 +1,3 @@
-
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -30,6 +29,7 @@ class PaymentMethod(PyEnum):
     momo = "momo"
     zalopay = "zalopay"
 
+
 class User(Base):
     __tablename__ = "Users"
 
@@ -47,9 +47,23 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow,
                         onupdate=datetime.datetime.utcnow)
 
-    # sau này có thể thêm quan hệ với Orders
+    # Quan hệ: 1 user có nhiều orders
     orders = relationship("Order", back_populates="user")
- 
+
+
+class Category(Base):
+    __tablename__ = "Categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, nullable=False)   # Tên danh mục
+    description = Column(String(250), nullable=True)          # Mô tả thêm
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    # Quan hệ: 1 Category có nhiều Product
+    products = relationship("Product", back_populates="category")
+
+
 class Product(Base):
     __tablename__ = "Products"
 
@@ -66,28 +80,18 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow,
                         onupdate=datetime.datetime.utcnow)
 
-    # Quan hệ ngược lại
+    # Quan hệ với Category (nhiều product thuộc 1 category)
     category = relationship("Category", back_populates="products")
+
+    # Quan hệ với OrderDetail
     order_details = relationship("OrderDetail", back_populates="product")
 
-class Category(Base):
-    __tablename__ = "Categories"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, nullable=False)   # Tên danh mục
-    description = Column(String(250), nullable=True)          # Mô tả thêm
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-
-    # Quan hệ với Product (1 Category có nhiều Product)
-    products = relationship("Product", back_populates="category")
 
 class Order(Base):
     __tablename__ = "Orders"
-    id = Column(Integer, primary_key=True, index=True)
 
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
-    user = relationship("User", backref="orders")
 
     status = Column(Enum(OrderStatus, name="order_status"), default=OrderStatus.pending)
     payment_method = Column(Enum(PaymentMethod, name="payment_method"), default=PaymentMethod.cash)
@@ -99,19 +103,28 @@ class Order(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow,
                         onupdate=datetime.datetime.utcnow)
-    
+
+    # Quan hệ: 1 Order thuộc 1 User
+    user = relationship("User", back_populates="orders")
+
+    # Quan hệ: 1 Order có nhiều OrderDetail
+    order_details = relationship("OrderDetail", back_populates="order")
+
+
 class OrderDetail(Base):
     __tablename__ = "OrderDetails"
 
     id = Column(Integer, primary_key=True, index=True)
-
     order_id = Column(Integer, ForeignKey("Orders.id"), nullable=False)
-    order = relationship("Order", backref="order_details")
-
     product_id = Column(Integer, ForeignKey("Products.id"), nullable=False)
-    product = relationship("Product", backref="order_details")
 
     quantity = Column(Integer, nullable=False, default=1)
     unit_price = Column(Float, nullable=False)   # giá tại thời điểm đặt hàng
     total_price = Column(Float, nullable=False)  # quantity * unit_price - discount
     note = Column(String(250), nullable=True)
+
+    # Quan hệ: mỗi OrderDetail thuộc 1 Order
+    order = relationship("Order", back_populates="order_details")
+
+    # Quan hệ: mỗi OrderDetail thuộc 1 Product
+    product = relationship("Product", back_populates="order_details")

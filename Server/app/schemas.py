@@ -74,11 +74,26 @@ class TokenResponse(BaseModel):
     token_type: str
 from pydantic import BaseModel
 
+class UserOut(BaseModel):
+    id: int
+    username: str
+    email: EmailStr
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    avatar_url: Optional[str] = None
+    role: UserRole
+    status: UserStatus
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True   # thay thế cho orm_mode trong Pydantic v2
+
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
-    user_id: int
-    username: str
+    user: UserOut
 
 
 # ====== Category ======

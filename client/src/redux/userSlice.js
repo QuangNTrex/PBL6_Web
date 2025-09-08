@@ -30,7 +30,7 @@ const userSlice = createSlice({
     clearUser(state) {
       state.username = '';
       state.email = '';
-      state.avatarUrl = '';
+      state.avatar_url = '';
       state.role = ''
     }
   }

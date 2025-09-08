@@ -30,9 +30,7 @@ function AuthForm({ type, onSubmit }) {
         {type === "login" ? "Đăng nhập" : "Đăng ký"}
       </h2>
       <form className="auth-form" onSubmit={handleSubmit}>
-        {type === "register" && (
-          <>
-            <input
+        <input
               type="text"
               name="username"
               placeholder="Tên đăng nhập"
@@ -41,6 +39,9 @@ function AuthForm({ type, onSubmit }) {
               className="auth-input"
               required
             />
+        {type === "register" && (
+          <>
+            
             <input
               type="text"
               name="full_name"
@@ -65,18 +66,19 @@ function AuthForm({ type, onSubmit }) {
               onChange={handleChange}
               className="auth-input"
             />
+            <input
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              className="auth-input"
+        
+            />
           </>
+          
         )}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className="auth-input"
-          required
-        />
+        
 
         <input
           type="password"
