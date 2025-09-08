@@ -1,0 +1,88 @@
+/* Toàn bộ form căn giữa màn hình */
+.auth-container {
+
+  width: 420px;
+  margin: 80px auto;
+  margin-top: 15rem;
+  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Hiệu ứng fadeIn khi load */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #1a1a1a;
+  letter-spacing: 0.5px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Input */
+.auth-input {
+  padding: 14px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  background: #fafafa;
+}
+
+.auth-input:focus {
+  border-color: #007bff;
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Nút chính */
+.auth-button {
+  padding: 14px;
+  background: linear-gradient(135deg, #007bff, #0056d6);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-button:hover {
+  background: linear-gradient(135deg, #0056d6, #003c9e);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 86, 214, 0.3);
+}
+
+.auth-button:active {
+  transform: scale(0.98);
+}
+
+/* Error message (nếu có) */
+.auth-error {
+  margin-top: 10px;
+  color: #e63946;
+  font-size: 14px;
+  font-weight: 500;
+}
