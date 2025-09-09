@@ -15,12 +15,23 @@
   padding: 12px 20px;
 }
 
-.admin-sidebar li a {
+.admin-sidebar a {
   color: white;
   text-decoration: none;
   display: block;
+  transition: background 0.3s, padding-left 0.3s;
+  border-radius: 4px;
 }
 
-.admin-sidebar li:hover {
+/* Hover effect */
+.admin-sidebar a:hover {
   background: #3d566e;
+  padding-left: 25px;
+}
+
+/* Active link */
+.admin-sidebar a.active {
+  background: #1abc9c;
+  font-weight: bold;
+  padding-left: 25px;
 }

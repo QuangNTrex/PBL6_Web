@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, UnicodeText, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, Date
 from sqlalchemy.orm import relationship
 from .database import Base
-from datetime import datetime, date   # 👈 sửa import ở đây
+from datetime import datetime, date
 import enum
 from enum import Enum as PyEnum
 
@@ -12,10 +12,12 @@ class UserRole(enum.Enum):
     staff = "staff"
     customer = "customer"
 
+
 class UserStatus(enum.Enum):
     active = "active"
     inactive = "inactive"
     banned = "banned"
+
 
 class OrderStatus(PyEnum):
     pending = "pending"
@@ -23,6 +25,7 @@ class OrderStatus(PyEnum):
     shipping = "shipping"
     completed = "completed"
     cancelled = "cancelled"
+
 
 class PaymentMethod(PyEnum):
     cash = "cash"
@@ -48,13 +51,16 @@ class User(Base):
     status = Column(Enum(UserStatus), default=UserStatus.active)
 
     birth_date = Column(Date, nullable=True)          # ngày sinh
-    gender = Column(Integer, nullable=True)               # 0 = nữ, 1 = nam
+    gender = Column(Integer, nullable=True)           # 0 = nữ, 1 = nam
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Quan hệ: 1 user có nhiều orders
     orders = relationship("Order", back_populates="user")
+
+    # Quan hệ: 1 user có nhiều products
+    products = relationship("Product", back_populates="user")
 
 
 # ====== Category ======
@@ -64,6 +70,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(Unicode(100), unique=True, nullable=False)   # Tên danh mục
     description = Column(Unicode(250), nullable=True)          # Mô tả thêm
+    image_url = Column(Unicode(2000), nullable=True)           # Ảnh cho category
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -83,13 +90,18 @@ class Product(Base):
     description = Column(Unicode(500), nullable=True)                   # Mô tả sản phẩm
     unit = Column(Unicode(50), default="cái")
     image_path = Column(Unicode(250), nullable=True)                    # Ảnh upload nội bộ
-    category_id = Column(Integer, ForeignKey("Categories.id"))  
+
+    category_id = Column(Integer, ForeignKey("Categories.id"))
+    user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)   # FK → User
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Quan hệ với Category
     category = relationship("Category", back_populates="products")
+
+    # Quan hệ với User
+    user = relationship("User", back_populates="products")
 
     # Quan hệ với OrderDetail
     order_details = relationship("OrderDetail", back_populates="product")

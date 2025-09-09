@@ -1,0 +1,136 @@
+.user-container {
+  padding: 20px;
+}
+
+.user-container h2 {
+  margin-bottom: 15px;
+}
+
+/* Toolbar */
+.user-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.user-toolbar input,
+.user-toolbar select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Bảng */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.user-table th {
+  background: #f4f4f4;
+}
+
+.user-table tr:hover {
+  background: #fafafa;
+}
+
+/* Avatar */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Status */
+.status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.inactive {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.banned {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Role */
+.role {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.role.admin {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.role.user {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.role.manager {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Nút hành động */
+.ban-btn,
+.delete-btn {
+  padding: 5px 10px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.ban-btn {
+  background: #ffeeba;
+  color: #856404;
+}
+
+.ban-btn:hover {
+  background: #ffc107;
+  color: #fff;
+}
+
+.delete-btn {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.delete-btn:hover {
+  background: #dc3545;
+  color: #fff;
+}

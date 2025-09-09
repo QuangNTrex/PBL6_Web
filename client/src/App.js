@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Layouts
 import AdminLayout from "./layouts/AdminLayout";
@@ -18,6 +18,7 @@ import CategoryForm from "./pages/admin/Category/CategoryForm";
 import UserList from "./pages/admin/User/UserList";
 import UserForm from "./pages/admin/User/UserForm";
 import OrderList from "./pages/admin/Order/OrderList";
+import CategoryManagePage from "./pages/admin/Category/CategoryManagePage";
 
 // Client Pages
 import Home from "./pages/client/Home";
@@ -27,6 +28,9 @@ import Cart from "./pages/client/Cart";
 import Checkout from "./pages/client/Checkout";
 import { useSelector } from "react-redux";
 import Profile from "./pages/client/Profile";
+import ProductManagePage from "./pages/admin/Product/ProductManagePage";
+import UserManagePage from "./pages/admin/User/UserManagePage";
+import SearchPage from "./pages/client/SearchPage";
 
 
 function App() {
@@ -38,15 +42,21 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        
+        {/* Client */}
         <Route element={<ClientLayout />}>
-          
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          {!!user.username && <Route path="/profile" element={<Profile />} />}
+          <Route path="/search" element={<SearchPage />} />
         </Route>
 
-         <Route path="/admin" element={<AdminLayout />}>
-         </Route>
+        {/* Admin */}
+        {user.role === "admin" &&  <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin/categories" element={<CategoryManagePage />} />
+          <Route path="/admin/products" element={<ProductManagePage />} />
+          <Route path="/admin/users" element={<UserManagePage />} />
+        </Route>}
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       
         {/* <Route element={<ClientLayout />}>
           
@@ -72,6 +82,7 @@ function App() {
 
           <Route path="orders" element={<OrderList />} />
         </Route> */}
+        
       </Routes>
 
   );

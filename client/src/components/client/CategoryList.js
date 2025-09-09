@@ -1,20 +1,29 @@
 // src/components/client/CategoryList.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./CategoryList.css";
+import { API_URL } from "../../utils/lib";
 
-const categories = [
-  { id: 1, name: "Rau củ", img: "https://cdnv2.tgdd.vn/bhx-static/bhx/Category/Images/8820/rau-la_202509081007292616.png" },
-  { id: 2, name: "Trái cây", img: "https://via.placeholder.com/100" },
-  { id: 3, name: "Đồ uống", img: "https://via.placeholder.com/100" },
-  { id: 4, name: "Gia vị", img: "https://via.placeholder.com/100" },
-];
+
 
 const CategoryList = () => {
+  const access_token = localStorage.getItem("access_token");
+  const [categories, setCategories] = useState([])
+  useEffect(() => {
+    fetch(`${API_URL}categories/`, {
+      headers: { Authorization: `Bearer ${access_token}` },
+    })
+      .then((res) => res.json())
+      .then((data) =>{
+         setCategories(data)
+         console.log(data)
+      })
+      .catch((err) => console.error("Lỗi lấy categories:", err));
+  }, []);
   return (
     <div className="category-list">
       {categories.map((cat) => (
         <div key={cat.id} className="category-card">
-          <img src={cat.img} alt={cat.name} />
+          <img src={cat.image_url} alt={cat.name} />
           <p>{cat.name}</p>
         </div>
       ))}

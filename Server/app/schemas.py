@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from datetime import datetime, date   # 👈 thêm date
+from datetime import datetime, date
 import enum
 
 # ====== Enum ======
@@ -26,8 +26,8 @@ class PaymentMethod(str, enum.Enum):
     credit_card = "credit_card"
     momo = "momo"
     zalopay = "zalopay"
-#----- Token -----
 
+#----- Token -----
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -43,8 +43,8 @@ class UserBase(BaseModel):
     avatar_url: Optional[str] = None
     role: Optional[UserRole] = UserRole.customer
     status: Optional[UserStatus] = UserStatus.active
-    birth_date: Optional[date] = None    # 👈 ngày sinh
-    gender: Optional[int] = None         # 👈 0 = nữ, 1 = nam
+    birth_date: Optional[date] = None
+    gender: Optional[int] = None   # 0 = nữ, 1 = nam
 
 class UserCreate(UserBase):
     password: str   # mật khẩu thô để đăng ký
@@ -82,14 +82,13 @@ class UserOut(BaseModel):
     avatar_url: Optional[str] = None
     role: UserRole
     status: UserStatus
-    birth_date: Optional[date] = None   # ngày sinh
-    gender: Optional[int] = None        # 0: nữ, 1: nam
-
+    birth_date: Optional[date] = None
+    gender: Optional[int] = None
     created_at: datetime
     updated_at: datetime
 
     class Config:
-        from_attributes = True   # thay orm_mode trong Pydantic v2
+        from_attributes = True
 
 class LoginResponse(BaseModel):
     access_token: str
@@ -105,6 +104,7 @@ class ChangePasswordRequest(BaseModel):
 class CategoryBase(BaseModel):
     name: str
     description: Optional[str] = None
+    image_url: Optional[str] = None   # 👈 thêm field
 
 class CategoryCreate(CategoryBase):
     pass
@@ -112,11 +112,20 @@ class CategoryCreate(CategoryBase):
 class CategoryUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    image_url: Optional[str] = None   # 👈 thêm field
 
 class Category(CategoryBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class CategoryOut(CategoryBase):
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -132,6 +141,7 @@ class ProductBase(BaseModel):
     unit: Optional[str] = "cái"
     image_path: Optional[str] = None
     category_id: Optional[int] = None
+    user_id: Optional[int] = None      # 👈 thêm field
 
 class ProductCreate(ProductBase):
     pass
@@ -144,9 +154,27 @@ class ProductUpdate(BaseModel):
     unit: Optional[str] = None
     image_path: Optional[str] = None
     category_id: Optional[int] = None
+    user_id: Optional[int] = None      # 👈 thêm field
 
 class Product(ProductBase):
     id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class ProductOut(BaseModel):
+    id: int
+    code: Optional[str] = None
+    name: str
+    description: Optional[str] = None
+    price: float
+    quantity: int
+    unit: Optional[str] = "cái"
+    image_path: Optional[str] = None
+    category_id: Optional[int] = None
+    user_id: Optional[int] = None       # 👈 thêm field
     created_at: datetime
     updated_at: datetime
 

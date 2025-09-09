@@ -1,6 +1,6 @@
 // src/components/client/Header.js
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../redux/userSlice";
@@ -11,11 +11,13 @@ const Header = () => {
   const isLoggedIn = !!user.username; // Đổi thành false để test trạng thái chưa đăng nhập
   const [isHovering, setIsHovering] = useState(false);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(clearUser());
     console.log("logout");
   };
+  const [keyword, setKeyword] = useState("");
+
 
   return (
     <header className="header">
@@ -27,8 +29,16 @@ const Header = () => {
 
         {/* Ô tìm kiếm */}
         <div className="search-bar">
-          <input type="text" placeholder="Tìm kiếm sản phẩm..." />
-          <button>Tìm</button>
+          <input
+        type="text"
+        placeholder="Tìm sản phẩm..."
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+      />
+          <button onClick={() => {
+            navigate(`/search?q=${encodeURIComponent(keyword)}`);
+          }
+          }>Tìm</button>
         </div>
 
         {/* Menu */}
