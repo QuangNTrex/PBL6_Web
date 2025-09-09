@@ -1,0 +1,18 @@
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.admin-body {
+  display: flex;
+  flex: 1;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  background: #ecf0f1;
+  overflow-y: auto;
+}

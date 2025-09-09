@@ -26,6 +26,7 @@ import CategoryPage from "./pages/client/CategoryPage";
 import Cart from "./pages/client/Cart";
 import Checkout from "./pages/client/Checkout";
 import { useSelector } from "react-redux";
+import Profile from "./pages/client/Profile";
 
 
 function App() {
@@ -41,7 +42,11 @@ function App() {
         <Route element={<ClientLayout />}>
           
           <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
+
+         <Route path="/admin" element={<AdminLayout />}>
+         </Route>
       
         {/* <Route element={<ClientLayout />}>
           

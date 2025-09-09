@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from datetime import datetime
-
+from datetime import datetime, date   # 👈 thêm date
 import enum
 
 # ====== Enum ======
@@ -27,6 +26,12 @@ class PaymentMethod(str, enum.Enum):
     credit_card = "credit_card"
     momo = "momo"
     zalopay = "zalopay"
+#----- Token -----
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
 
 # ====== User ======
 class UserBase(BaseModel):
@@ -38,9 +43,11 @@ class UserBase(BaseModel):
     avatar_url: Optional[str] = None
     role: Optional[UserRole] = UserRole.customer
     status: Optional[UserStatus] = UserStatus.active
+    birth_date: Optional[date] = None    # 👈 ngày sinh
+    gender: Optional[int] = None         # 👈 0 = nữ, 1 = nam
 
 class UserCreate(UserBase):
-    password: str   # nhận mật khẩu thô để đăng ký
+    password: str   # mật khẩu thô để đăng ký
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
@@ -48,6 +55,8 @@ class UserUpdate(BaseModel):
     address: Optional[str] = None
     avatar_url: Optional[str] = None
     status: Optional[UserStatus] = None
+    birth_date: Optional[date] = None
+    gender: Optional[int] = None
 
 class User(UserBase):
     id: int
@@ -57,22 +66,11 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+
 # ======= Auth ======
-
-class UserCreate(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
-    full_name: Optional[str] = None
-
 class UserLogin(BaseModel):
     username: str
     password: str
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str
-from pydantic import BaseModel
 
 class UserOut(BaseModel):
     id: int
@@ -84,16 +82,23 @@ class UserOut(BaseModel):
     avatar_url: Optional[str] = None
     role: UserRole
     status: UserStatus
+    birth_date: Optional[date] = None   # ngày sinh
+    gender: Optional[int] = None        # 0: nữ, 1: nam
+
     created_at: datetime
     updated_at: datetime
 
     class Config:
-        from_attributes = True   # thay thế cho orm_mode trong Pydantic v2
+        from_attributes = True   # thay orm_mode trong Pydantic v2
 
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserOut
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
 
 
 # ====== Category ======
@@ -115,6 +120,7 @@ class Category(CategoryBase):
 
     class Config:
         from_attributes = True
+
 
 # ====== Product ======
 class ProductBase(BaseModel):
@@ -147,6 +153,7 @@ class Product(ProductBase):
     class Config:
         from_attributes = True
 
+
 # ====== OrderDetail ======
 class OrderDetailBase(BaseModel):
     order_id: int
@@ -168,6 +175,7 @@ class OrderDetail(OrderDetailBase):
 
     class Config:
         from_attributes = True
+
 
 # ====== Order ======
 class OrderBase(BaseModel):

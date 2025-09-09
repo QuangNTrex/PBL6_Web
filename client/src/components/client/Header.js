@@ -8,7 +8,7 @@ import { clearUser } from "../../redux/userSlice";
 const Header = () => {
   // Giả lập trạng thái đăng nhập, thay bằng logic thực tế của bạn
   const user = useSelector(state => state.user)
-  const [isLoggedIn] = useState(!!user.username); // Đổi thành false để test trạng thái chưa đăng nhập
+  const isLoggedIn = !!user.username; // Đổi thành false để test trạng thái chưa đăng nhập
   const [isHovering, setIsHovering] = useState(false);
   const dispatch = useDispatch();
 

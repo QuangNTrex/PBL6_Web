@@ -1,40 +1,56 @@
 // src/redux/userSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  username: "",
-  email: 'abc@gmail.com',
-  full_name: "",
-  phone: "",
-  address: "",
-  avatar_url: "",
-  role: "",
-  status: "",
-};
+// Lấy user từ localStorage nếu có
+const storedUser = localStorage.getItem("user");
+const initialState = storedUser
+  ? JSON.parse(storedUser)
+  : {
+      username: "",
+      email: "",
+      full_name: "",
+      phone: "",
+      address: "",
+      avatar_url: "",
+      role: "",
+      status: "",
+      gender : "",
+      birth_date : "",
+    };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser(state, action) {
-      state.full_name = action.payload.full_name;
-      state.username = action.payload.username;
-      state.email = action.payload.email;
-      state.avatar_url = action.payload.avatar_url;
-      state.address = action.payload.address;
-      state.phone = action.payload.phone;
-      state.email = action.payload.email;
-      state.role = action.payload.role;
+      const newUser = {
+        ...state,
+        ...action.payload,
+      };
+      // Lưu xuống localStorage
+      localStorage.setItem("user", JSON.stringify(newUser));
 
+      return newUser; // Redux Toolkit cho phép return object mới
     },
-    clearUser(state) {
-      state.username = '';
-      state.email = '';
-      state.avatar_url = '';
-      state.role = ''
-    }
-  }
+    clearUser() {
+      // Xóa user trong localStorage
+      localStorage.removeItem("user");
+
+      return {
+        username: "",
+        email: "",
+        full_name: "",
+        phone: "",
+        address: "",
+        avatar_url: "",
+        role: "",
+        status: "",
+        gender : "",
+        birth_date : "",
+      };
+    },
+  },
 });
 
-export const { setUser, pushUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;

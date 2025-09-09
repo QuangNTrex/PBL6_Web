@@ -20,6 +20,7 @@ function Login() {
                 },
                 body: JSON.stringify(formData)
             }).then(res => res.json()).then(data => {
+                if(data.detail) throw new Error(data.detail);
                 console.log(data);
                 dispatch(setUser(data.user));
                 localStorage.setItem("access_token", data.access_token);
