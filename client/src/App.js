@@ -33,6 +33,12 @@ import UserManagePage from "./pages/admin/User/UserManagePage";
 import SearchPage from "./pages/client/SearchPage";
 import CartPage from "./pages/client/CartPage";
 import ProductDetailPage from "./pages/client/ProductDetailPage";
+import CheckoutPage from "./pages/client/CheckoutPage";
+import OrderPage from "./pages/client/OrderPage";
+import OrderDetailPage from "./pages/client/OrderDetailPage";
+import OrderManagementPage from "./pages/admin/Order/OrderManagementPage";
+import DashboardPage from "./pages/admin/DashboardPage";
+import CategoryProductsPage from "./pages/client/CategoryProductPage";
 
 
 function App() {
@@ -52,13 +58,19 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/products/:id" element={<ProductDetailPage/>} />
+          <Route path="/categories/:categoryId" element={<CategoryProductsPage/>} />
+          {!!user.username && <Route path="/checkout" element={<CheckoutPage/>} />}
+          {!!user.username && <Route path="/orders" element={<OrderPage/>} />}
+          {!!user.username && <Route path="/orders/:id" element={<OrderDetailPage/>} />}
         </Route>
 
         {/* Admin */}
         {user.role === "admin" &&  <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<DashboardPage />} />
           <Route path="/admin/categories" element={<CategoryManagePage />} />
           <Route path="/admin/products" element={<ProductManagePage />} />
           <Route path="/admin/users" element={<UserManagePage />} />
+          <Route path="/admin/orders" element={<OrderManagementPage />} />
         </Route>}
 
         <Route path="*" element={<Navigate to="/" replace />} />

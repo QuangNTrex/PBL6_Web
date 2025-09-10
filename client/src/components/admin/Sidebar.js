@@ -12,6 +12,11 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
+          <NavLink to="/admin/orders">
+            Orders
+          </NavLink>
+        </li>
+        <li>
           <NavLink to="/admin/users">
             Users
           </NavLink>
@@ -24,11 +29,6 @@ const Sidebar = () => {
         <li>
           <NavLink to="/admin/products">
             Products
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/admin/settings">
-            Settings
           </NavLink>
         </li>
       </ul>

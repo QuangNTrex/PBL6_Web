@@ -210,6 +210,12 @@ class OrderDetailBase(BaseModel):
 
 class OrderDetailCreate(OrderDetailBase):
     pass
+class OrderDetailCreateByOrder(BaseModel):
+    product_id: int
+    quantity: int
+    unit_price: float
+    total_price: float
+    note: Optional[str] = None
 
 class OrderDetailUpdate(BaseModel):
     quantity: Optional[int] = None
@@ -222,6 +228,16 @@ class OrderDetail(OrderDetailBase):
         from_attributes = True
 
 
+class OrderDetail(OrderDetailBase):
+    id: int
+    # 🟢 Thêm product tham chiếu
+    product: Optional["ProductOut"] = None  
+
+    class Config:
+        from_attributes = True
+
+
+
 # ====== Order ======
 class OrderBase(BaseModel):
     user_id: int
@@ -231,8 +247,9 @@ class OrderBase(BaseModel):
     shipping_address: Optional[str] = None
     note: Optional[str] = None
 
+# 🟢 Khi tạo order, cho phép gửi kèm danh sách order_details
 class OrderCreate(OrderBase):
-    pass
+    order_details: List["OrderDetailCreateByOrder"] = []
 
 class OrderUpdate(BaseModel):
     status: Optional[OrderStatus] = None
@@ -244,7 +261,8 @@ class Order(OrderBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    order_details: List[OrderDetail] = []
+    order_details: List["OrderDetail"] = []   # trả về cả danh sách chi tiết
 
     class Config:
         from_attributes = True
+

@@ -9,3 +9,10 @@
   gap: 15px;
 }
 
+.product-list-container .pagination {
+  margin-top: 4rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 

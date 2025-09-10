@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function Profile() {
     const access_token = localStorage.getItem("access_token");
   const user = useSelector((state) => state.user);
+  console.log("User from Redux:", user);
   const dispatch = useDispatch();
   const navigator = useNavigate();
   const [activeTab, setActiveTab] = useState("account");
@@ -122,12 +123,12 @@ export default function Profile() {
         >
             Đổi mật khẩu
         </button>
-        <button
+        {user.role === "admin" && <button
           className={activeTab === "admin" ? "active" : ""}
           onClick={() => navigator("/admin")}
         >
           Chuyển sang chế độ Admin
-        </button>
+        </button>}
       </aside>
 
       {/* Content */}

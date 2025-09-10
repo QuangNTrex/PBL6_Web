@@ -69,6 +69,7 @@ const cartSlice = createSlice({
       state.items = [];
       saveToLocalStorage(state);
     },
+    
   },
 });
 
@@ -79,6 +80,7 @@ export const getTotalAmount = (state) =>
 // 🟢 Selector: Đếm tổng số lượng sản phẩm
 export const getTotalQuantity = (state) =>
   state.cart.items.reduce((count, item) => count + item.quantity, 0);
+
 
 export const {
   addToCart,

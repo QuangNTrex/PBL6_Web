@@ -94,3 +94,13 @@ def get_product_by_id(product_id: int, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+# 🟢 API: lấy sản phẩm theo category_id
+@router.get("/category/{category_id}", response_model=List[schemas.ProductOut])
+def get_products_by_category(category_id: int, db: Session = Depends(get_db)):
+    products = (
+        db.query(models.Product)
+        .filter(models.Product.category_id == category_id)
+        .all()
+    )
+    return products

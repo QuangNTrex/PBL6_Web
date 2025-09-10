@@ -2,10 +2,12 @@
 import React, { useEffect, useState } from "react";
 import "./CategoryList.css";
 import { API_URL } from "../../utils/lib";
+import { useNavigate } from "react-router-dom";
 
 
 
 const CategoryList = () => {
+  const navigate = useNavigate();
   const access_token = localStorage.getItem("access_token");
   const [categories, setCategories] = useState([])
   useEffect(() => {
@@ -22,7 +24,7 @@ const CategoryList = () => {
   return (
     <div className="category-list">
       {categories.map((cat) => (
-        <div key={cat.id} className="category-card">
+        <div onClick={() => navigate("/categories/" + cat.id)} key={cat.id} className="category-card">
           <img src={cat.image_url} alt={cat.name} />
           <p>{cat.name}</p>
         </div>
