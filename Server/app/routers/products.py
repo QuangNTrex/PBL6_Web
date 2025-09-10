@@ -86,3 +86,11 @@ def get_products_pagination(
         .all()
     )
     return products
+
+# 🟢 API: Lấy sản phẩm theo ID
+@router.get("/{product_id}", response_model=schemas.ProductOut)
+def get_product_by_id(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product

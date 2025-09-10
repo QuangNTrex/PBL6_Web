@@ -31,6 +31,8 @@ import Profile from "./pages/client/Profile";
 import ProductManagePage from "./pages/admin/Product/ProductManagePage";
 import UserManagePage from "./pages/admin/User/UserManagePage";
 import SearchPage from "./pages/client/SearchPage";
+import CartPage from "./pages/client/CartPage";
+import ProductDetailPage from "./pages/client/ProductDetailPage";
 
 
 function App() {
@@ -41,12 +43,15 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
 
         {/* Client */}
         <Route element={<ClientLayout />}>
           <Route path="/" element={<Home />} />
           {!!user.username && <Route path="/profile" element={<Profile />} />}
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage/>} />
         </Route>
 
         {/* Admin */}

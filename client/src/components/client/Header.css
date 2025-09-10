@@ -59,3 +59,24 @@
 .nav-links a:hover {
   text-decoration: underline;
 }
+
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+  color: #333;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #e63946;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  line-height: 1;
+  min-width: 18px;
+  text-align: center;
+}

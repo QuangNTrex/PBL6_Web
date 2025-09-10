@@ -164,6 +164,7 @@ class Product(ProductBase):
     class Config:
         from_attributes = True
 
+# 🟢 Schema trả về sản phẩm kèm category
 class ProductOut(BaseModel):
     id: int
     code: Optional[str] = None
@@ -173,13 +174,29 @@ class ProductOut(BaseModel):
     quantity: int
     unit: Optional[str] = "cái"
     image_path: Optional[str] = None
-    category_id: Optional[int] = None
-    user_id: Optional[int] = None       # 👈 thêm field
+    user_id: Optional[int] = None
+    created_at: datetime
+    updated_at: datetime
+
+    # 🟢 Quan hệ với Category
+    category: Optional["CategoryOut"] = None  
+
+    class Config:
+        from_attributes = True
+
+
+# Đảm bảo CategoryOut có trước
+class CategoryOut(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
+
 
 
 # ====== OrderDetail ======
