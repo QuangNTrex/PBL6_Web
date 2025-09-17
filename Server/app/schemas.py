@@ -266,3 +266,47 @@ class Order(OrderBase):
     class Config:
         from_attributes = True
 
+# ====== CartItem ======
+class CartItemBase(BaseModel):
+    product_id: int
+    quantity: int
+
+class CartItemCreate(CartItemBase):
+    pass
+
+class CartItemUpdate(BaseModel):
+    quantity: Optional[int] = None
+
+class CartItemOut(BaseModel):
+    id: int
+    product_id: int
+    quantity: int
+    unit_price: float
+    total_price: float
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ====== Cart ======
+class CartBase(BaseModel):
+    user_id: int
+
+class CartCreate(CartBase):
+    pass
+
+class CartUpdate(BaseModel):
+    pass
+
+class CartOut(BaseModel):
+    id: int
+    user_id: int
+    total_amount: float
+    created_at: datetime
+    updated_at: datetime
+    items: List[CartItemOut] = []
+
+    class Config:
+        from_attributes = True

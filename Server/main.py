@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app import models
-from app.routers import users, categories, order_details, products, orders, auth
+from app.routers import users, categories, order_details, products, orders, auth, statistics, cart, stream
 
 app = FastAPI()
 
@@ -31,3 +31,6 @@ app.include_router(categories.router)
 app.include_router(order_details.router)
 app.include_router(products.router)
 app.include_router(orders.router)
+app.include_router(statistics.router)
+app.include_router(cart.router)
+app.include_router(stream.router)

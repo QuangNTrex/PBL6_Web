@@ -123,11 +123,17 @@ export default function Profile() {
         >
             Đổi mật khẩu
         </button>
+        {user.role !== "customer" && <button
+          className={activeTab === "admin" ? "active" : ""}
+          onClick={() => navigator("/staff")}
+        >
+          Trang Nhân viên
+        </button>}
         {user.role === "admin" && <button
           className={activeTab === "admin" ? "active" : ""}
           onClick={() => navigator("/admin")}
         >
-          Chuyển sang chế độ Admin
+          Trang Admin
         </button>}
       </aside>
 

@@ -1,107 +1,108 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { Suspense, lazy } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import StaffLayout from "./layouts/StaffLayout";
+import ProductStaffManagePage from "./pages/staff/Product/ProductStaffManagePage";
 
 // Layouts
-import AdminLayout from "./layouts/AdminLayout";
-import ClientLayout from "./layouts/ClientLayout";
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const ClientLayout = lazy(() => import("./layouts/ClientLayout"));
 
 // Auth Pages
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
 
 // Admin Pages
-import Dashboard from "./pages/admin/Dashboard";
-import ProductList from "./pages/admin/Product/ProductList";
-import ProductForm from "./pages/admin/Product/ProductForm";
-import CategoryList from "./pages/admin/Category/CategoryList";
-import CategoryForm from "./pages/admin/Category/CategoryForm";
-import UserList from "./pages/admin/User/UserList";
-import UserForm from "./pages/admin/User/UserForm";
-import OrderList from "./pages/admin/Order/OrderList";
-import CategoryManagePage from "./pages/admin/Category/CategoryManagePage";
+const CategoryManagePage = lazy(() => import("./pages/admin/Category/CategoryManagePage"));
+const ProductManagePage = lazy(() => import("./pages/admin/Product/ProductManagePage"));
+const UserManagePage = lazy(() => import("./pages/admin/User/UserManagePage"));
+const OrderManagementPage = lazy(() => import("./pages/admin/Order/OrderManagementPage"));
+const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
+const ScanProductPage = lazy(() => import("./pages/admin/ScanProduct/ScanProductPage"));
 
 // Client Pages
-import Home from "./pages/client/Home";
-import ProductDetail from "./pages/client/ProductDetail";
-import CategoryPage from "./pages/client/CategoryPage";
-import Cart from "./pages/client/Cart";
-import Checkout from "./pages/client/Checkout";
-import { useSelector } from "react-redux";
-import Profile from "./pages/client/Profile";
-import ProductManagePage from "./pages/admin/Product/ProductManagePage";
-import UserManagePage from "./pages/admin/User/UserManagePage";
-import SearchPage from "./pages/client/SearchPage";
-import CartPage from "./pages/client/CartPage";
-import ProductDetailPage from "./pages/client/ProductDetailPage";
-import CheckoutPage from "./pages/client/CheckoutPage";
-import OrderPage from "./pages/client/OrderPage";
-import OrderDetailPage from "./pages/client/OrderDetailPage";
-import OrderManagementPage from "./pages/admin/Order/OrderManagementPage";
-import DashboardPage from "./pages/admin/DashboardPage";
-import CategoryProductsPage from "./pages/client/CategoryProductPage";
+const Home = lazy(() => import("./pages/client/Home"));
+const Profile = lazy(() => import("./pages/client/Profile"));
+const SearchPage = lazy(() => import("./pages/client/SearchPage"));
+const CartPage = lazy(() => import("./pages/client/CartPage"));
+const ProductDetailPage = lazy(() => import("./pages/client/ProductDetailPage"));
+const CheckoutPage = lazy(() => import("./pages/client/CheckoutPage"));
+const OrderPage = lazy(() => import("./pages/client/OrderPage"));
+const OrderDetailPage = lazy(() => import("./pages/client/OrderDetailPage"));
+const CategoryProductsPage = lazy(() => import("./pages/client/CategoryProductPage"));
 
+
+
+// --------- Protected Routes ----------
+const PrivateRoute = ({ children, user }) => {
+  return user?.username ? children : <Navigate to="/login" replace />;
+};
+
+const AdminRoute = ({ children, user }) => {
+  return user?.role === "admin" ? children : <Navigate to="/" replace />;
+};
+
+const StaffRoute = ({ children, user }) => {
+  return user?.role === "staff" ? children : user?.role === "admin" ? children : <Navigate to="/" replace />;
+};
 
 function App() {
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
+
   return (
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* Auth */}
-
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
 
         {/* Client */}
         <Route element={<ClientLayout />}>
           <Route path="/" element={<Home />} />
-          {!!user.username && <Route path="/profile" element={<Profile />} />}
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage/>} />
-          <Route path="/categories/:categoryId" element={<CategoryProductsPage/>} />
-          {!!user.username && <Route path="/checkout" element={<CheckoutPage/>} />}
-          {!!user.username && <Route path="/orders" element={<OrderPage/>} />}
-          {!!user.username && <Route path="/orders/:id" element={<OrderDetailPage/>} />}
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/categories/:categoryId" element={<CategoryProductsPage />} />
+
+          <Route path="/profile" element={<PrivateRoute user={user}><Profile /></PrivateRoute>} />
+          <Route path="/checkout" element={<PrivateRoute user={user}><CheckoutPage /></PrivateRoute>} />
+          <Route path="/orders" element={<PrivateRoute user={user}><OrderPage /></PrivateRoute>} />
+          <Route path="/orders/:id" element={<PrivateRoute user={user}><OrderDetailPage /></PrivateRoute>} />
         </Route>
 
         {/* Admin */}
-        {user.role === "admin" &&  <Route path="/admin" element={<AdminLayout />}>
-          <Route path="/admin" element={<DashboardPage />} />
-          <Route path="/admin/categories" element={<CategoryManagePage />} />
-          <Route path="/admin/products" element={<ProductManagePage />} />
-          <Route path="/admin/users" element={<UserManagePage />} />
-          <Route path="/admin/orders" element={<OrderManagementPage />} />
-        </Route>}
-
-        <Route path="*" element={<Navigate to="/" replace />} />
-      
-        {/* <Route element={<ClientLayout />}>
-          
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:id" element={<CategoryPage />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute user={user}>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="categories" element={<CategoryManagePage />} />
+          <Route path="products" element={<ProductManagePage />} />
+          <Route path="users" element={<UserManagePage />} />
+          <Route path="orders" element={<OrderManagementPage />} />
+          <Route path="scan-product" element={<ScanProductPage />} />
+        </Route>
+        {/* staff */}
+        <Route
+          path="/staff"
+          element={
+            <StaffRoute user={user}>
+              <StaffLayout />
+            </StaffRoute>
+          }
+        >
+          <Route path="scan-product" element={<ScanProductPage />} />
+          <Route path="products" element={<ProductStaffManagePage />} />
         </Route>
 
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<ProductList />} />
-          <Route path="products/new" element={<ProductForm />} />
-          <Route path="products/:id/edit" element={<ProductForm />} />
-
-          <Route path="categories" element={<CategoryList />} />
-          <Route path="categories/new" element={<CategoryForm />} />
-          <Route path="categories/:id/edit" element={<CategoryForm />} />
-
-          <Route path="users" element={<UserList />} />
-          <Route path="users/new" element={<UserForm />} />
-          <Route path="users/:id/edit" element={<UserForm />} />
-
-          <Route path="orders" element={<OrderList />} />
-        </Route> */}
-        
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
+    </Suspense>
   );
 }
 

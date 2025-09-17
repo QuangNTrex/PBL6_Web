@@ -1,168 +1,126 @@
 // src/pages/admin/DashboardPage.js
 import React, { useEffect, useState } from "react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
+  LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip,
+  PieChart, Pie, Cell, Legend
 } from "recharts";
 import "./DashboardPage.css";
 import { API_URL } from "../../utils/lib";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({});
+  const [overview, setOverview] = useState({});
   const [revenueData, setRevenueData] = useState([]);
-  const [orderStatus, setOrderStatus] = useState({});
-  const [recentOrders, setRecentOrders] = useState([]);
-  const [recentUsers, setRecentUsers] = useState([]);
+  const [statusData, setStatusData] = useState([]);
+  const [latestOrders, setLatestOrders] = useState([]);
+  const [latestCustomers, setLatestCustomers] = useState([]);
 
-  // 🎯 Gọi API khi load trang
+  console.log("Overview data:", overview);
+  console.log("Revenue data:", revenueData);
+  console.log("Status data:", statusData);
+  console.log("Latest orders:", latestOrders);
+  console.log("Latest customers:", latestCustomers);
   useEffect(() => {
-    fetch( API_URL + "admin/dashboard/stats")
-      .then((res) => res.json())
-      .then(setStats);
+    const fetchData = async () => {
+      try {
+        // 1. Tổng quan
+        const resOverview = await fetch(API_URL + "statistics/overview");
+        setOverview(await resOverview.json());
 
-    fetch(API_URL + "admin/dashboard/revenue-by-month?year=2025")
-      .then((res) => res.json())
-      .then((data) => {
-        const formatted = data.months.map((m, i) => ({
-          month: m,
-          revenue: data.revenues[i],
-        }));
-        setRevenueData(formatted);
-      });
+        // 2. Doanh thu theo tháng (năm hiện tại)
+        const year = new Date().getFullYear();
+        const resRevenue = await fetch(API_URL + `statistics/revenue-by-month?year=${year}`);
+        setRevenueData(await resRevenue.json());
 
-    fetch(API_URL + "admin/dashboard/order-status-ratio")
-      .then((res) => res.json())
-      .then(setOrderStatus);
+        // 3. Tỉ lệ đơn hàng theo trạng thái
+        const resStatus = await fetch(API_URL + "statistics/order-status-ratio");
+        setStatusData(await resStatus.json());
 
-    fetch(API_URL + "admin/dashboard/recent-orders?limit=5")
-      .then((res) => res.json())
-      .then(setRecentOrders);
+        // 4. Đơn hàng gần nhất
+        const resOrders = await fetch(API_URL + "statistics/latest-orders");
+        setLatestOrders(await resOrders.json());
 
-    fetch(API_URL + "admin/dashboard/recent-users?limit=5")
-      .then((res) => res.json())
-      .then(setRecentUsers);
+        // 5. Khách hàng mới
+        const resCustomers = await fetch(API_URL + "statistics/latest-customers");
+        setLatestCustomers(await resCustomers.json());
+      } catch (err) {
+        console.error("Lỗi khi tải dashboard:", err);
+      }
+    };
+    fetchData();
   }, []);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#c45850"];
+  const COLORS = ["#3498db", "#2ecc71", "#e67e22", "#e74c3c", "#9b59b6"];
 
   return (
     <div className="dashboard-container">
-      <h2 className="dashboard-title">📊 Dashboard</h2>
+      <h1>📊 Dashboard</h1>
 
-      {/* Cards */}
-      <div className="dashboard-cards">
-        <div className="card">
-          <h3>🛒 Sản phẩm</h3>
-          <p>{stats.total_products || 0}</p>
-        </div>
-        <div className="card">
-          <h3>📦 Đơn hàng</h3>
-          <p>{stats.total_orders || 0}</p>
-        </div>
-        <div className="card">
-          <h3>💰 Doanh thu</h3>
-          <p>{(stats.total_revenue || 0).toLocaleString()} đ</p>
-        </div>
-        <div className="card">
-          <h3>👥 Khách hàng</h3>
-          <p>{stats.total_users || 0}</p>
-        </div>
+      {/* --- Tổng quan --- */}
+      <div className="overview-cards">
+        <div className="card">📦 Sản phẩm: <span>{overview.total_products}</span></div>
+        <div className="card">🧾 Đơn hàng: <span>{overview.total_orders}</span></div>
+        <div className="card">💰 Doanh thu: <span>{overview.total_revenue?.toLocaleString()} đ</span></div>
+        <div className="card">👥 Khách hàng: <span>{overview.total_customers}</span></div>
       </div>
 
-      {/* Charts */}
-      <div className="dashboard-charts">
-        {/* Line Chart */}
+      {/* --- Biểu đồ --- */}
+      <div className="charts">
         <div className="chart-box">
           <h3>📈 Doanh thu theo tháng</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
-            </LineChart>
-          </ResponsiveContainer>
+          <LineChart width={500} height={300} data={revenueData}>
+            <CartesianGrid stroke="#ccc" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="revenue" stroke="#3498db" />
+          </LineChart>
         </div>
 
-        {/* Pie Chart */}
         <div className="chart-box">
-          <h3>📊 Trạng thái đơn hàng</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={Object.entries(orderStatus).map(([name, value]) => ({
-                  name,
-                  value,
-                }))}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {Object.entries(orderStatus).map((entry, index) => (
-                  <Cell key={entry[0]} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          <h3>🥧 Tỉ lệ đơn hàng theo trạng thái</h3>
+          <PieChart width={400} height={300}>
+            <Pie
+              data={statusData}
+              dataKey="count"
+              nameKey="status"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              fill="#8884d8"
+              label
+            >
+              {statusData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
         </div>
       </div>
 
-      {/* Recent Lists */}
-      <div className="dashboard-lists">
+      {/* --- Danh sách gần nhất --- */}
+      <div className="recent-lists">
         <div className="list-box">
-          <h3>🆕 Đơn hàng gần nhất</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Khách hàng</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.user?.full_name || order.user?.email}</td>
-                  <td>{order.total_amount.toLocaleString()} đ</td>
-                  <td>{order.status}</td>
-                  <td>{new Date(order.created_at).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3>🧾 5 Đơn hàng gần nhất</h3>
+          <ul>
+            {latestOrders.map((o) => (
+              <li key={o.id}>
+                #{o.id} - {o.status} - {o.total_amount.toLocaleString()} đ
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="list-box">
-          <h3>👤 Khách hàng mới</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Email</th>
-                <th>Ngày đăng ký</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentUsers.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.full_name || "N/A"}</td>
-                  <td>{user.email}</td>
-                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3>👥 5 Khách hàng mới</h3>
+          <ul>
+            {latestCustomers.map((c) => (
+              <li key={c.id}>
+                {c.full_name || c.username} - {c.email}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

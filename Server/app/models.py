@@ -33,6 +33,42 @@ class PaymentMethod(PyEnum):
     momo = "momo"
     zalopay = "zalopay"
 
+# ====== Cart ======
+class Cart(Base):
+    __tablename__ = "Carts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
+
+    total_amount = Column(Float, default=0)  # Tổng tiền giỏ hàng
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Quan hệ: 1 cart có nhiều CartItem
+    items = relationship("CartItem", back_populates="cart")
+
+    # Quan hệ: 1 cart thuộc về 1 user
+    user = relationship("User")
+
+
+# ====== CartItem ======
+class CartItem(Base):
+    __tablename__ = "CartItems"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cart_id = Column(Integer, ForeignKey("Carts.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("Products.id"), nullable=False)
+
+    quantity = Column(Integer, nullable=False, default=1)
+    unit_price = Column(Float, nullable=False)   # Giá sản phẩm tại thời điểm thêm vào cart
+    total_price = Column(Float, nullable=False)  # quantity * unit_price
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Quan hệ
+    cart = relationship("Cart", back_populates="items")
+    product = relationship("Product")
 
 # ====== User ======
 class User(Base):
