@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from app import models, schemas
 from app.database import get_db
+from ..core.auth_middleware import get_current_user
 
 router = APIRouter(
     prefix="/orders",
@@ -56,6 +57,14 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Order not found")
     return db_order
 
+# 🟢 Lấy đơn hàng theo user_id
+@router.get("/user/{user_id}", response_model=List[schemas.Order])
+def get_orders_by_user(user_id: int, db: Session = Depends(get_db)):
+    orders = db.query(models.Order).filter(models.Order.user_id == user_id).all()
+    if not orders:
+        raise HTTPException(status_code=404, detail="Không tìm thấy đơn hàng nào cho user này")
+    return orders
+
 
 # 🟢 Cập nhật đơn hàng (không động đến order_details ở đây)
 @router.put("/{order_id}", response_model=schemas.Order)
@@ -85,3 +94,33 @@ def delete_order(order_id: int, db: Session = Depends(get_db)):
     db.delete(db_order)
     db.commit()
     return {"message": "Order and details deleted successfully"}
+
+#huy don hang tu nguoi dung
+@router.put("/{order_id}/cancel", response_model=schemas.Order)
+def cancel_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    API: Người dùng hủy đơn hàng của chính mình
+    """
+    # Lấy đơn hàng thuộc về user
+    print(current_user.id)
+    order = db.query(models.Order).filter(
+        models.Order.id == order_id,
+        models.Order.user_id == current_user.id
+    ).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found or not owned by user")
+
+    if order.status in [schemas.OrderStatus.shipping, schemas.OrderStatus.completed]:
+        raise HTTPException(status_code=400, detail="Order cannot be canceled at this stage")
+
+    # Cập nhật trạng thái
+    order.status = schemas.OrderStatus.cancelled
+    db.commit()
+    db.refresh(order)
+
+    return order

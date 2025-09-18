@@ -1,8 +1,10 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import StaffLayout from "./layouts/StaffLayout";
 import ProductStaffManagePage from "./pages/staff/Product/ProductStaffManagePage";
+import { API_URL } from "./utils/lib";
+import { clearUser, setUser } from "./redux/userSlice";
 
 // Layouts
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
@@ -19,6 +21,8 @@ const UserManagePage = lazy(() => import("./pages/admin/User/UserManagePage"));
 const OrderManagementPage = lazy(() => import("./pages/admin/Order/OrderManagementPage"));
 const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
 const ScanProductPage = lazy(() => import("./pages/admin/ScanProduct/ScanProductPage"));
+// Staff Pages
+const OrderStaffManagementPage = lazy(() => import("./pages/staff/Order/OrderStaffManagementPage"));
 
 // Client Pages
 const Home = lazy(() => import("./pages/client/Home"));
@@ -48,6 +52,25 @@ const StaffRoute = ({ children, user }) => {
 
 function App() {
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch()
+  const access_token = localStorage.getItem('access_token');
+
+  useEffect(() => {
+    fetch(API_URL + "auth/me", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + access_token
+        },
+    }).then(res => res.json()).then(data => {
+        if(data.detail) throw new Error(data.detail);
+        console.log(data);
+        dispatch(setUser(data.user));
+    }).catch(err => {
+        dispatch(clearUser());
+        console.error("Đăng nhập thất bại:", err);
+    })
+    }, [])
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -96,6 +119,7 @@ function App() {
           }
         >
           <Route path="scan-product" element={<ScanProductPage />} />
+          <Route path="orders" element={<OrderStaffManagementPage />} />
           <Route path="products" element={<ProductStaffManagePage />} />
         </Route>
 

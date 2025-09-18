@@ -13,7 +13,7 @@ export default function OrderPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/orders?user_id=${user.id}`);
+        const res = await fetch(`http://localhost:8000/orders/user/${user.id}`);
         if (!res.ok) throw new Error("Không thể tải đơn hàng");
         const data = await res.json();
         setOrders(data);

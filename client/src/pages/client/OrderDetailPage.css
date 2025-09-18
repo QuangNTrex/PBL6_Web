@@ -102,3 +102,11 @@
   background: #f8d7da;
   color: #721c24;
 }
+.wrap-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.cancel-btn {
+  background-color: rgb(255, 62, 62);
+}

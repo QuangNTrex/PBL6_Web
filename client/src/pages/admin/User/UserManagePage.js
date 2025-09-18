@@ -42,7 +42,7 @@ const UserManagePage = () => {
 
   const handleToggleBan = (id, currentStatus) => {
     const newStatus = currentStatus === "active" ? "banned" : "active";
-    fetch(API_URL + `users/${id}/status`, {
+    fetch(API_URL + `users/admin/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -52,10 +52,30 @@ const UserManagePage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+         console.log(data)
+        if(data.detail) return;
         setUsers(users.map((u) => (u.id === id ? { ...u, status: newStatus } : u)));
       })
       .catch((err) => console.error("Lỗi cập nhật status:", err));
   };
+
+  const handleChangeRole = (id, newRole) => {
+  fetch(API_URL + `users/admin/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({ role: newRole }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      if (data.detail) return;
+      setUsers(users.map((u) => (u.id === id ? { ...u, role: newRole } : u)));
+    })
+    .catch((err) => console.error("Lỗi cập nhật role:", err));
+};
 
   const handleDelete = (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
@@ -138,7 +158,15 @@ const UserManagePage = () => {
               </td>
               <td>{renderGender(u.gender)}</td>
               <td>
-                <span className={`role ${u.role}`}>{u.role}</span>
+                <select
+                  value={u.role}
+                  onChange={(e) => handleChangeRole(u.id, e.target.value)}
+                  className={`role-select ${u.role}`}
+                >
+                  <option value="admin">Admin</option>
+                  <option value="staff">Staff</option>
+                  <option value="customer">Customer</option>
+                </select>
               </td>
               <td>
                 <span className={`status ${u.status}`}>{u.status}</span>

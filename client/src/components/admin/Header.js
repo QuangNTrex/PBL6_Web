@@ -1,18 +1,32 @@
 import React, { useState } from "react";
 import "./Header.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { API_URL } from "../../utils/lib";
+import { clearUser } from "../../redux/userSlice";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
-  const user = useSelector(state => state.user);    
+  const user = useSelector(state => state.user);   
+  const access_token = localStorage.getItem("access_token") 
+  const dispatch = useDispatch()
 
   const toggleMenu = () => {
     setOpen(!open);
   };
 
-    const logoutHandler = () => () => {
-    }
+    const logoutHandler = () => {
+    fetch(API_URL + "auth/logout", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + access_token,
+      }
+    }).then(res => {
+      
+    })
+    dispatch(clearUser());
+    console.log("logout");
+  };
 
   return (
     <header className="admin-header">
@@ -41,13 +55,16 @@ const Header = () => {
             </div>
            <ul>
               <li>
-                <Link to="/admin/profile">👤 Tài khoản của tôi</Link>
+                <Link to="/admin/profile">Tài khoản của tôi</Link>
               </li>
               <li>
-                <Link to="/admin/settings">⚙ Cài đặt</Link>
+                <Link to="/admin/settings">Cài đặt</Link>
               </li>
               <li>
-                <Link onClick={logoutHandler()}>🚪 Đăng xuất</Link>
+                <Link to="/">Trang chủ</Link>
+              </li>
+              <li>
+                <Link onClick={logoutHandler()}>Đăng xuất</Link>
               </li>
             </ul>
           </div>

@@ -1,19 +1,22 @@
 import React from "react";
+import "./ScanProductPage.css";
 
 function ScanProductPage() {
   return (
-    <div className="p-6 flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Quét sản phẩm thanh toán tự động
-      </h2>
+    <div className="scan-page">
+      <h2 className="title">Đang quét sản phẩm...</h2>
 
-      <div className="bg-white shadow-xl rounded-2xl p-4 w-full max-w-4xl">
-        <div className="flex justify-center">
+      <div className="video-card">
+        <div className="video-wrapper">
           <img
             src="http://localhost:8000/stream/stream"
             alt="Video Stream"
-            className="rounded-xl border-4 border-gray-300 max-h-[70vh] shadow-md"
+            className="video-stream"
           />
+        </div>
+
+        <div className="button-group">
+          <button className="btn btn-primary">Chụp</button>
         </div>
       </div>
     </div>

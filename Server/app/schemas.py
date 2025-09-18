@@ -66,6 +66,13 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+class UserRoleStatusUpdate(BaseModel):
+    role: Optional[UserRole] = None
+    status: Optional[UserStatus] = None
+
+    class Config:
+        use_enum_values = True   # để trả về "admin" thay vì UserRole.admin
+
 
 # ======= Auth ======
 class UserLogin(BaseModel):

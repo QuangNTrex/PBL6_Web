@@ -11,7 +11,13 @@ while True:
     if not ret:
         break
 
-    _, img_encoded = cv2.imencode('.jpg', frame)
+    # Giảm kích thước ảnh xuống 640x480 (tuỳ bạn điều chỉnh)
+    frame_resized = cv2.resize(frame, (640, 480))
+
+    # Encode ảnh sau khi resize
+    _, img_encoded = cv2.imencode('.jpg', frame_resized, [cv2.IMWRITE_JPEG_QUALITY, 80])  
+    # JPEG quality = 80 để giảm dung lượng mà vẫn rõ
+
     files = {'file': ('frame.jpg', img_encoded.tobytes(), 'image/jpeg')}
     
     try:
@@ -19,4 +25,4 @@ while True:
     except Exception as e:
         print("Error:", e)
     
-    time.sleep(1.0/30)  # gửi ~10 fps
+    time.sleep(1.0/25)  # ~25 fps

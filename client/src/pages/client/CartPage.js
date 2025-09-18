@@ -5,6 +5,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
+  removeMoreFromCart,
 } from "../../redux/cartSlice";
 import "./CartPage.css";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,10 @@ export default function CartPage() {
     }
   };
 
+  const handleRemoveSelected = () => {
+    dispatch(removeMoreFromCart(selectedItems));
+  }
+
   // Toggle chọn tất cả
   const toggleSelectAll = () => {
     if (allSelected) {
@@ -52,7 +57,7 @@ export default function CartPage() {
 
   return (
     <div className="cart-container">
-      <h2 className="cart-title">🛒 Giỏ hàng của bạn</h2>
+      <h2 className="cart-title">Giỏ hàng của bạn</h2>
 
       {items.length === 0 ? (
         <p className="cart-empty">Giỏ hàng của bạn đang trống.</p>
@@ -119,6 +124,9 @@ export default function CartPage() {
           <div className="cart-summary">
             <h3>Tổng cộng: {totalAmount.toLocaleString()} đ</h3>
             <div className="cart-summary-actions">
+               <button className="clear-btn" onClick={handleRemoveSelected}>
+                Xóa
+              </button>
               <button className="checkout-btn-1" onClick={handleCheckout}>
                 Thanh toán
               </button>

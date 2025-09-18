@@ -39,7 +39,7 @@ export default function CategoryProductsPage() {
   return (
     <div className="category-products-container">
       <h2 className="category-title">
-        📂 Danh mục: {category?.name || "Không xác định"}
+        Danh mục: {category?.name || "Không xác định"}
       </h2>
 
       {products.length === 0 ? (

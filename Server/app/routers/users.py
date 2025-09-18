@@ -49,3 +49,23 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return user
+
+# 🟢 API: Cập nhật role và status của user
+@router.patch("/admin/{user_id}", response_model=schemas.UserOut)
+def update_user_role_status(
+    user_id: int,
+    update_data: schemas.UserRoleStatusUpdate,
+    db: Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if update_data.role is not None:
+        user.role = update_data.role
+    if update_data.status is not None:
+        user.status = update_data.status
+
+    db.commit()
+    db.refresh(user)
+    return user

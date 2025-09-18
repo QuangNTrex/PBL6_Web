@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { clearCart } from "../../redux/cartSlice";
+import { clearCart, removeMoreFromCart } from "../../redux/cartSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./CheckoutPage.css";
 import { API_URL } from "../../utils/lib";
@@ -59,7 +59,8 @@ export default function CheckoutPage() {
       const data = await res.json();
       console.log("✅ Đặt hàng thành công:", data);
 
-      
+
+      dispatch(removeMoreFromCart(selectedItems.map(i => i.id)))
       navigate("/orders");
     } catch (err) {
       console.error("❌ Lỗi khi đặt hàng:", err);

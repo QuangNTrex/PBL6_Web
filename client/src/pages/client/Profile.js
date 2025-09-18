@@ -43,7 +43,7 @@ export default function Profile() {
     const data = {...formData, gender: formData.gender === "male" ? 1 : 0, };
     
     console.log(data);
-    fetch(API_URL + "users/update", {
+    fetch(API_URL + "users/" + user.id, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
@@ -110,12 +110,6 @@ export default function Profile() {
           onClick={() => setActiveTab("account")}
         >
           Tài khoản của tôi
-        </button>
-        <button
-          className={activeTab === "orders" ? "active" : ""}
-          onClick={() => setActiveTab("orders")}
-        >
-          Đơn mua
         </button>
         <button
             className={activeTab === "changePassword" ? "active" : ""}

@@ -149,6 +149,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
+    # staff_id = Column(Integer, ForeignKey("Users.id"), nullable=True)  # nhân viên đặt hộ (có thể null)
 
     status = Column(Enum(OrderStatus, name="order_status"), default=OrderStatus.pending)
     payment_method = Column(Enum(PaymentMethod, name="payment_method"), default=PaymentMethod.cash)
@@ -163,8 +164,10 @@ class Order(Base):
     # Quan hệ: 1 Order thuộc 1 User
     user = relationship("User", back_populates="orders")
 
+
     # Quan hệ: 1 Order có nhiều OrderDetail
     order_details = relationship("OrderDetail", back_populates="order")
+
 
 
 # ====== OrderDetail ======

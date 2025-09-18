@@ -50,7 +50,7 @@ function AuthForm({ type, onSubmit }) {
               onChange={handleChange}
               className="auth-input"
             />
-            <input
+            {/* <input
               type="text"
               name="phone"
               placeholder="Số điện thoại"
@@ -65,7 +65,7 @@ function AuthForm({ type, onSubmit }) {
               value={form.address}
               onChange={handleChange}
               className="auth-input"
-            />
+            /> */}
             <input
               name="email"
               placeholder="Email"

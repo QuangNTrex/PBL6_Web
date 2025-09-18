@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./ProductManagePage.css";
 import { API_URL } from "../../../utils/lib";
 import ProductForm from "./ProductForm";
+import { useSelector } from "react-redux";
 
 const ProductManagePage = () => {
   const [products, setProducts] = useState([]);
@@ -13,6 +14,7 @@ const ProductManagePage = () => {
   const [editingProduct, setEditingProduct] = useState(null);
 
   const access_token = localStorage.getItem("access_token");
+  const user = useSelector(state => state.user)
 
   // =============== Load data ===============
   useEffect(() => {
@@ -54,6 +56,7 @@ const ProductManagePage = () => {
           price: parseFloat(formData.price),
           quantity: parseInt(formData.quantity),
           category_id: parseInt(formData.category_id),
+          user_id: user.id
         }),
       })
         .then((res) => res.json())
@@ -70,6 +73,7 @@ const ProductManagePage = () => {
           price: parseFloat(formData.price),
           quantity: parseInt(formData.quantity),
           category_id: parseInt(formData.category_id),
+          user_id: user.id
         }
         console.log("Thêm sản phẩm:", product);
       fetch(API_URL + "products/", {
@@ -109,7 +113,7 @@ const ProductManagePage = () => {
   // =============== Lọc + tìm kiếm ===============
   const filteredProducts = products.filter((p) => {
     const matchCategory =
-      selectedCategory === "all" || p.category_id === parseInt(selectedCategory);
+      selectedCategory === "all" || p.category.id === parseInt(selectedCategory);
     const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCategory && matchSearch;
   });
@@ -165,7 +169,7 @@ const ProductManagePage = () => {
               <td>{p.name}</td>
               <td>{p.price}</td>
               <td>{p.quantity}</td>
-              <td>{categories.find((c) => c.id === p.category_id)?.name || "—"}</td>
+              <td>{p.category.name}</td>
               <td>
                 <button onClick={() => handleEdit(p)}>✏ Sửa</button>
                 <button onClick={() => handleDelete(p.id)}>🗑 Xóa</button>

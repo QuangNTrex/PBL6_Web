@@ -13,7 +13,7 @@ const Home = () => {
       <div className="container" style={{ padding: "20px" }}>
         {/* Danh mục */}
         <h2 style={{ marginBottom: "10px" }}>Danh mục sản phẩm</h2>
-        <CategoryList />
+        <CategoryList/>
 
         {/* Sản phẩm nổi bật */}
         <h2 style={{ margin: "30px 0 10px" }}>Sản phẩm nổi bật</h2>

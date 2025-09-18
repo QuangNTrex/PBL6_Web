@@ -134,3 +134,24 @@
   background: #dc3545;
   color: #fff;
 }
+
+.role-select {
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.role-select.admin {
+  background: #ffe0e0;
+  color: #d9534f;
+}
+
+.role-select.staff {
+  background: #e0f7ff;
+  color: #0275d8;
+}
+
+.role-select.customer {
+  background: #e8ffe0;
+  color: #5cb85c;
+}

@@ -43,6 +43,12 @@ const cartSlice = createSlice({
       state.items = state.items.filter((item) => item.id !== productId);
       saveToLocalStorage(state);
     },
+    // 🟢 Xóa nhieu sản phẩm khỏi giỏ
+    removeMoreFromCart: (state, action) => {
+      const productIds = action.payload;
+      state.items = state.items.filter((item) => !productIds.includes(item.id));
+      saveToLocalStorage(state);
+    },
 
     // 🟢 Tăng số lượng
     increaseQuantity: (state, action) => {
@@ -85,6 +91,7 @@ export const getTotalQuantity = (state) =>
 export const {
   addToCart,
   removeFromCart,
+  removeMoreFromCart,
   increaseQuantity,
   decreaseQuantity,
   clearCart,

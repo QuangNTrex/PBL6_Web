@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 # ==============================
 # Cấu hình kết nối SQL Server
 # ==============================
-DATABASE_URL = "mssql+pyodbc://sa:123456789@localhost/PBL6?driver=ODBC+Driver+17+for+SQL+Server"
+# DATABASE_URL = "mssql+pyodbc://sa:123456789@localhost/PBL6?driver=ODBC+Driver+17+for+SQL+Server"
+DATABASE_URL = "mssql+pyodbc://@DESKTOP-1PDGM0O/PBL6?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
 
 # Tạo engine kết nối
 engine = create_engine(DATABASE_URL)

@@ -11,7 +11,7 @@ const ClientLayout = () => {
       <Header />
 
       {/* Nội dung trang con */}
-      <main style={{ minHeight: "70vh", padding: "20px" }}>
+      <main style={{ minHeight: "70vh", padding: "6rem", paddingTop: "2rem"}}>
         <Outlet />
       </main>
 

@@ -1,12 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./OrderDetailPage.css";
+import { API_URL } from "../../utils/lib";
 
 export default function OrderDetailPage() {
   const { id } = useParams(); // lấy orderId từ URL
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const access_token = localStorage.getItem("access_token");
+
+  const cancelOrderHandler = () => {
+    fetch(API_URL + "orders/" + order.id + "/cancel", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + access_token
+        },
+    }).then(res => res.json()).then(data => {
+        if(data.detail) throw new Error(data.detail);
+        console.log(data);
+        setOrder(data);
+    }).catch(err => {
+        console.error("Đăng nhập thất bại:", err);
+    })
+  }
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
@@ -79,10 +97,15 @@ export default function OrderDetailPage() {
       <div className="order-total">
         <h3>Tổng cộng: {order.total_amount.toLocaleString()} đ</h3>
       </div>
+      <div className="wrap-btn">
 
       <button className="back-btn" onClick={() => navigate("/orders")}>
         ← Quay lại danh sách đơn hàng
       </button>
+      {!(order.status === "completed" || order.status === "shipping" || order.status === "cancelled") && <button className="back-btn cancel-btn" onClick={cancelOrderHandler}>
+        Hủy đơn hàng
+      </button> }
+      </div>
     </div>
   );
 }

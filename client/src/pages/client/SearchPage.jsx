@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./SearchPage.css";
-import ProductItem from "../../components/client/ProductItem";
 import { API_URL } from "../../utils/lib";
+import ProductCard from "../../components/client/ProductCard";
 
 const SearchPage = () => {
   const [products, setProducts] = useState([]);
@@ -58,7 +58,7 @@ const SearchPage = () => {
       });
   }, [q]);
 
-  const newProducts = products.filter(p => category ? p.category_id == category : true);
+  const newProducts = products.filter(p => category ? p.category.id == category : true);
   newProducts.sort((p1, p2) => (sort === "asc" ? p1.price - p2.price : sort==="desc" ? p2.price - p1.price: true));
   return (
     <div className="search-container">
@@ -89,7 +89,7 @@ const SearchPage = () => {
       ) : products.length > 0 ? (
         <div className="product-grid">
           {newProducts.map((p) => (
-            <ProductItem key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       ) : (

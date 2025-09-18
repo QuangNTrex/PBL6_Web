@@ -5,18 +5,21 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 2rem;
+  padding: 6rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 6rem;
 }
 
 .logo {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 2rem;
   color: white;
   text-decoration: none;
 }
@@ -33,6 +36,7 @@
   padding: 8px;
   border: none;
   border-radius: 6px 0 0 6px;
+  font-size: 14px;
 }
 
 .search-bar button {
@@ -79,4 +83,7 @@
   line-height: 1;
   min-width: 18px;
   text-align: center;
+}
+.popup-btn {
+  margin: 0 !important;
 }
