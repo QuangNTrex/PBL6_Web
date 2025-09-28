@@ -50,6 +50,13 @@ const Header = () => {
             placeholder="Tìm sản phẩm..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                // gọi hàm rỗng hoặc xử lý gì đó
+                console.log("Enter pressed");
+                navigate(`/search?q=${encodeURIComponent(keyword)}`);
+              }
+            }}
           />
           <button
             onClick={() => {

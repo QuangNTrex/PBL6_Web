@@ -4,9 +4,11 @@
 }
 
 .product-list {
+  padding-left: 4rem;
+  padding-right: 4rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 2rem;
 }
 
 .product-list-container .pagination {
@@ -15,4 +17,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 } 

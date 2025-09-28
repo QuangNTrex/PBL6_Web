@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, Date, UnicodeText
 from sqlalchemy.orm import relationship
 from .database import Base
 from datetime import datetime, date
@@ -50,7 +50,6 @@ class Cart(Base):
     # Quan hệ: 1 cart thuộc về 1 user
     user = relationship("User")
 
-
 # ====== CartItem ======
 class CartItem(Base):
     __tablename__ = "CartItems"
@@ -83,7 +82,7 @@ class User(Base):
     full_name = Column(Unicode(150), nullable=True)
     phone = Column(Unicode(20), nullable=True)
     address = Column(Unicode(250), nullable=True)
-    avatar_url = Column(Unicode(2000), nullable=True)       # ảnh đại diện
+    avatar_url = Column(UnicodeText, nullable=True)       # ảnh đại diện
     status = Column(Enum(UserStatus), default=UserStatus.active)
 
     birth_date = Column(Date, nullable=True)          # ngày sinh
@@ -105,8 +104,8 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(Unicode(100), unique=True, nullable=False)   # Tên danh mục
-    description = Column(Unicode(250), nullable=True)          # Mô tả thêm
-    image_url = Column(Unicode(2000), nullable=True)           # Ảnh cho category
+    description = Column(UnicodeText, nullable=True)         # Mô tả thêm
+    image_url = Column(UnicodeText, nullable=True)          # Ảnh cho category
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -120,10 +119,11 @@ class Product(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(Unicode(50), unique=True, index=True, nullable=True)    # Mã sản phẩm (barcode / SKU)
+    
     name = Column(Unicode(150), nullable=False)
     price = Column(Float, nullable=False)
     quantity = Column(Integer, default=0)
-    description = Column(Unicode(500), nullable=True)                   # Mô tả sản phẩm
+    description = Column(UnicodeText, nullable=True)                   # Mô tả sản phẩm
     unit = Column(Unicode(50), default="cái")
     image_path = Column(Unicode(250), nullable=True)                    # Ảnh upload nội bộ
 

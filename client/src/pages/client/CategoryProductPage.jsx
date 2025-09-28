@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./CategoryProductsPage.css";
 import { API_URL } from "../../utils/lib";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/cartSlice";
+import ProductCard from "../../components/client/ProductCard";
 
 export default function CategoryProductsPage() {
   const { categoryId } = useParams(); // lấy id từ URL
@@ -10,6 +13,16 @@ export default function CategoryProductsPage() {
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
+
+  
+  const handleAddToCart = (e) => {
+      e.stopPropagation();
+      e.preventDefault(); // Ngăn chặn sự kiện mặc định của thẻ <a> hoặc <button>
+      e.stopPropagation(); // Ngăn chặn sự kiện nổi bọt lên các phần tử cha
+      //dispatch(addToCart({ product, quantity: 1 }));
+      return;
+    };
 
   useEffect(() => {
     async function fetchData() {
@@ -47,12 +60,13 @@ export default function CategoryProductsPage() {
       ) : (
         <div className="product-grid">
           {products.map((p) => (
-            <div onClick={() => navigate("/products/" + p.id)} key={p.id} className="product-card">
-              <img src={p.image_path} alt={p.name} />
-              <h3>{p.name}</h3>
-              <p className="price">{p.price.toLocaleString()} đ</p>
-              <button className="btn-add">Thêm vào giỏ</button>
-            </div>
+            // <div onClick={() => navigate("/products/" + p.id)} key={p.id} className="product-card">
+            //   <img src={p.image_path} alt={p.name} />
+            //   <h3>{p.name}</h3>
+            //   <p className="price">{p.price.toLocaleString()} đ</p>
+            //   <button onClick={handleAddToCart} className="btn-add">Thêm vào giỏ</button>
+            // </div>
+            <ProductCard product={p}/>
           ))}
         </div>
       )}

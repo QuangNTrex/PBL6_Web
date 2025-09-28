@@ -64,7 +64,7 @@ const Header = () => {
                 <Link to="/"> Trang chủ</Link>
               </li>
               <li>
-                <Link onClick={logoutHandler()}> Đăng xuất</Link>
+                <Link onClick={logoutHandler}> Đăng xuất</Link>
               </li>
             </ul>
           </div>

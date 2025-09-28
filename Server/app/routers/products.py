@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
-from typing import List
+from typing import List, Dict, Any
+from math import ceil
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -66,17 +67,23 @@ def search_products(q: str = Query(..., min_length=1, description="Tên sản ph
     return products
 
 # 🟢 API phân trang
-@router.get("/pagination", response_model=List[schemas.ProductOut])
+@router.get("/pagination", response_model=schemas.PaginationResponse)
 def get_products_pagination(
     page: int = Query(1, ge=1, description="Trang hiện tại (bắt đầu từ 1)"),
     size: int = Query(10, ge=1, le=100, description="Số sản phẩm mỗi trang"),
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """
     Lấy danh sách sản phẩm theo phân trang.
     - page: số trang (mặc định = 1)
     - size: số sản phẩm mỗi trang (mặc định = 10)
+    Trả về cả tổng số trang.
     """
+    # Tổng số sản phẩm
+    total_items = db.query(models.Product).count()
+    total_pages = ceil(total_items / size) if total_items > 0 else 1
+
+    # Lấy dữ liệu theo phân trang
     offset = (page - 1) * size
     products = (
         db.query(models.Product)
@@ -85,8 +92,14 @@ def get_products_pagination(
         .limit(size)
         .all()
     )
-    return products
 
+    return {
+        "page": page,
+        "size": size,
+        "totalItems": total_items,
+        "totalPages": total_pages,
+        "products": products,
+    }
 # 🟢 API: Lấy sản phẩm theo ID
 @router.get("/{product_id}", response_model=schemas.ProductOut)
 def get_product_by_id(product_id: int, db: Session = Depends(get_db)):

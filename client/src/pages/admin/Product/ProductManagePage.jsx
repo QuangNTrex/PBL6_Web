@@ -154,6 +154,7 @@ const ProductManagePage = () => {
           <tr>
             <th>ID</th>
             <th>Mã SP</th>
+            <th>Ảnh</th>
             <th>Tên SP</th>
             <th>Giá</th>
             <th>Số lượng</th>
@@ -166,6 +167,13 @@ const ProductManagePage = () => {
             <tr key={p.id}>
               <td>{p.id}</td>
               <td>{p.code}</td>
+              <td>
+                {p.image_path ? (
+                  <img src={p.image_path} className="product-image" />
+                ) : (
+                  <span className="no-image">Không có ảnh</span>
+                )}
+              </td>
               <td>{p.name}</td>
               <td>{p.price}</td>
               <td>{p.quantity}</td>

@@ -24,7 +24,7 @@ const ProductForm = ({ categories, initialData = {}, onSubmit, onCancel }) => {
         description: initialData.description || "",
         unit: initialData.unit || "cái",
         image_path: initialData.image_path || "",
-        category_id: initialData.category_id || "",
+        category_id: initialData.category.id || "",
       });
     }
   }, [initialData]);
@@ -41,6 +41,8 @@ const ProductForm = ({ categories, initialData = {}, onSubmit, onCancel }) => {
     e.preventDefault();
     onSubmit(formData);
   };
+
+  console.log(formData);
 
   return (
     <div className="product-form-modal">
@@ -105,7 +107,7 @@ const ProductForm = ({ categories, initialData = {}, onSubmit, onCancel }) => {
         >
           <option value="">Chọn danh mục</option>
           {categories.map((c) => (
-            <option key={c.id} value={c.id}>
+            <option key={c.id} value={c.id} selected={c.id === formData.category_id}>
               {c.name}
             </option>
           ))}

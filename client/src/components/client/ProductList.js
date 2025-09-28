@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ProductList.css";
 import { API_URL } from "../../utils/lib";
 import ProductCard from "./ProductCard";  // ✅ import component tái sử dụng
 
-const ProductList = () => {
+const ProductList = ({scroll}) => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
-  const [size] = useState(10);
+  const [size] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const productsRef = useRef(null);
+
+  const handleScroll = () => {
+    setTimeout(() => {
+      productsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 2000); 
+    
+  };
 
   const fetchProducts = async (pageNum) => {
     try {
@@ -16,7 +24,7 @@ const ProductList = () => {
       const res = await fetch(`${API_URL}products/pagination?page=${pageNum}&size=${size}`);
       const data = await res.json();
 
-      setProducts(data || []);
+      setProducts(data.products || []);
       setTotalPages(data.totalPages || 1);
       setLoading(false);
       
@@ -30,12 +38,18 @@ const ProductList = () => {
     fetchProducts(page);
   }, [page]);
 
-  const handlePrev = () => page > 1 && setPage(page - 1);
-  const handleNext = () => page < totalPages && setPage(page + 1);
+  const handlePrev = () => {
+    page > 1 && setPage(page - 1)
+    scroll();
+  };
+  const handleNext = () => {
+    page < totalPages && setPage(page + 1)
+    scroll();
+  };
   console.log(products);
 
   return (
-    <div className="product-list-container">
+    <div className="product-list-container" ref={productsRef}>
       {loading ? (
         <p>Đang tải dữ liệu...</p>
       ) : (

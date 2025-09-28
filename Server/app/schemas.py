@@ -191,6 +191,13 @@ class ProductOut(BaseModel):
     class Config:
         from_attributes = True
 
+class PaginationResponse(BaseModel):
+    page: int
+    size: int
+    totalItems: int
+    totalPages: int
+    products: List[ProductOut]
+
 
 # Đảm bảo CategoryOut có trước
 class CategoryOut(BaseModel):

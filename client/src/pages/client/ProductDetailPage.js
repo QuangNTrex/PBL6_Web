@@ -78,7 +78,7 @@ const ProductDetailPage = () => {
       {/* Mô tả sản phẩm */}
       <div className="product-description">
         <h2>Mô tả sản phẩm</h2>
-        <p>{product.description}</p>
+        <div dangerouslySetInnerHTML={{ __html: product.description }} />   
       </div>
     </div>
   );

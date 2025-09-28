@@ -1,0 +1,626 @@
+[
+    {
+        "name": "Bánh cracker vị lúa mì AFC Dinh Dưỡng hộp 172g",
+        "size": "18 × 10 × 3 cm"
+    },
+    {
+        "name": "Bánh cracker vị rau AFC Dinh Dưỡng hộp 172g",
+        "size": "18 × 10 × 3 cm"
+    },
+    {
+        "name": "Bánh gạo nướng vị tảo biển Orion An gói 159g",
+        "size": "16 × 9 × 2 cm"
+    },
+    {
+        "name": "Bánh bông lan sợi thịt gà Orion C’est Bon gói 85g (5 cái × 17g)",
+        "size": "14 × 8 × 2.5 cm"
+    },
+    {
+        "name": "Bánh Chocopie Orion hộp 66g (2 cái)",
+        "size": "12 × 7 × 3 cm"
+    },
+    {
+        "name": "Bánh quy vị cà phê Coffee Joy hộp 156g",
+        "size": "17 × 11 × 2.5 cm"
+    },
+    {
+        "name": "Bánh quế vị kem socola Cosy gói 117.6g",
+        "size": "16 × 9 × 2 cm"
+    },
+    {
+        "name": "Bánh quy nhân mứt thơm Cosy hộp 240g",
+        "size": "20 × 12 × 3 cm"
+    },
+    {
+        "name": "Bánh trứng cao cấp Custard 25k",
+        "size": "15 × 9 × 3 cm"
+    },
+    {
+        "name": "Bánh kem trứng Custas hộp 470g (20 cái)",
+        "size": "25 × 17 × 5 cm"
+    },
+    {
+        "name": "Bánh quy bơ Danisa hộp 681g",
+        "size": "23 × 23 × 16 cm"
+    },
+    {
+        "name": "Bánh quy bơ Danisa hộp 681g",
+        "size": "23 × 23 × 16 cm"
+    },
+    {
+        "name": "Bánh quy bơ hỗn hợp Goody cao cấp hộp 454g",
+        "size": "20 × 20 × 13 cm"
+    },
+    {
+        "name": "Bánh quy mè Gouté hộp 288g",
+        "size": "18 × 12 × 4 cm"
+    },
+    {
+        "name": "Bánh bông lan hương sữa dâu Hura Deli hộp 168g (6 cái)",
+        "size": "16 × 9 × 4 cm"
+    },
+    {
+        "name": "Bánh gạo Nhật vị Shouyu mật ong Ichi gói 100g",
+        "size": "15 × 10 × 2 cm"
+    },
+    {
+        "name": "Bánh xốp phủ socola KitKat gói 35g",
+        "size": "13 × 7 × 2 cm"
+    },
+    {
+        "name": "Snack Orion – Bánh Jungle Boy / Marine Boy hộp 35g",
+        "size": "14 × 8 × 2 cm"
+    },
+    {
+        "name": "Bánh xốp nhân phô mai Nabati hộp 300g",
+        "size": "22 × 12 × 4 cm"
+    },
+    {
+        "name": "Bánh Snack Khoai Tây 35g",
+        "size": "13 × 8 × 2 cm"
+    },
+    {
+        "name": "Snack khoai tây vị kim chi Hàn Quốc O'Star gói 55g",
+        "size": "15 × 10 × 3 cm"
+    },
+    {
+        "name": "Snack khoai tây vị tự nhiên O'Star gói 55g",
+        "size": "15 × 10 × 3 cm"
+    },
+    {
+        "name": "Snack khoai tây vị phô mai trứng muối O'Star gói 90g",
+        "size": "18 × 12 × 4 cm"
+    },
+    {
+        "name": "Snack khoai tây vị tảo biển O'Star gói 55g",
+        "size": "15 × 10 × 3 cm"
+    },
+    {
+        "name": "Bánh đa cua Vifon gói 60g",
+        "size": "14 × 10 × 3 cm"
+    },
+    {
+        "name": "Hộp 12 cái bao cao su Durex Fetherlite Ultima 52mm",
+        "size": "12 × 6 × 3 cm"
+    },
+    {
+        "name": "Bao Cao Su Durex Invisible hộp 3 gói",
+        "size": "7 × 7 × 3 cm"
+    },
+    {
+        "name": "Bao Cao Su Durex Chocolate (3s) - Gai Nhỏ - Hương Socola",
+        "size": "7 × 7 × 3 cm"
+    },
+    {
+        "name": "Bao cao su Durex Pleasuremax, Hộp 03 cái",
+        "size": "7 × 7 × 3 cm"
+    },
+    {
+        "name": "Bia Sài Gòn Lager 330ml",
+        "size": "6 × 6 × 12 cm"
+    },
+    {
+        "name": "Bia Tiger lon 250ml",
+        "size": "5.5 × 5.5 × 11.5 cm"
+    },
+    {
+        "name": "Cà phê đen đá NesCafé Café Việt 240g",
+        "size": "17 × 11 × 4 cm"
+    },
+    {
+        "name": "Cà phê sữa G7 3 in 1 336g",
+        "size": "18 × 12 × 5 cm"
+    },
+    {
+        "name": "Cà phê Hữu Khánh 500g",
+        "size": "20 × 12 × 6 cm"
+    },
+    {
+        "name": "Cà phê Hữu Khánh 500g",
+        "size": "20 × 12 × 6 cm"
+    },
+    {
+        "name": "Hộp cà phê NesCafe 3 in1 đậm đà xanh",
+        "size": "18 × 12 × 5 cm"
+    },
+    {
+        "name": "Cà phê Trung Nguyên I khát vọng khởi nghiệp 500g",
+        "size": "20 × 13 × 6 cm"
+    },
+    {
+        "name": "Cà Phê Sữa Vinacafe Gold 800g - Bịch 40 gói × 20g",
+        "size": "26 × 16 × 8 cm"
+    },
+    {
+        "name": "Cà phê sữa Wake Up Café Sài Gòn 456g",
+        "size": "22 × 15 × 7 cm"
+    },
+    {
+        "name": "Cà phê sữa Wake Up 3 trong 1 hương chồn 306g",
+        "size": "18 × 12 × 5 cm"
+    },
+    {
+        "name": "Cà phê sữa Wake Up Café Sài Gòn 456g",
+        "size": "22 × 15 × 7 cm"
+    },
+    {
+        "name": "Dầu thực vật bổ sung vitamin A & D3 Marvela chai 1 lít",
+        "size": "27 × 8 × 8 cm"
+    },
+    {
+        "name": "Dầu đậu nành nguyên chất Simply chai 1 lít",
+        "size": "27 × 8 × 8 cm"
+    },
+    {
+        "name": "Dầu gội bồ kết trái cây maily 450ml",
+        "size": "21 × 7 × 7 cm"
+    },
+    {
+        "name": "Dầu gội sạch gàu Clear Men Cool Sport bạc hà 330ml",
+        "size": "19 × 6 × 6 cm"
+    },
+    {
+        "name": "Dầu gội sạch gàu Clear mát lạnh bạc hà 854ml",
+        "size": "26 × 8.5 × 8.5 cm"
+    },
+    {
+        "name": "Dầu gội sạch gàu Clear mát lạnh bạc hà 330ml",
+        "size": "19 × 6 × 6 cm"
+    },
+    {
+        "name": "Bộ Dầu gội xả Dove phục hồi hư tổn 330ml/chai",
+        "size": "19 × 6 × 6 cm"
+    },
+    {
+        "name": "Dầu gội Dove Ceramide phục hồi hư tổn 621ml",
+        "size": "24 × 7.5 × 7.5 cm"
+    },
+    {
+        "name": "Dầu gội Fresh bồ kết óng mượt rạng ngời 320g",
+        "size": "20 × 7 × 7 cm"
+    },
+    {
+        "name": "Dầu gội sạch gàu Head & Shoulders cho da đầu ngứa 625ml",
+        "size": "24 × 8 × 6 cm"
+    },
+    {
+        "name": "Dầu gội Lifebuoy tóc dày óng ả 165ml",
+        "size": "16 × 5 × 4 cm"
+    },
+    {
+        "name": "Dầu gội Pantene Pro-Vitamin ngăn tóc gãy rụng 900ml",
+        "size": "27 × 9 × 7 cm"
+    },
+    {
+        "name": "Dầu gội Rejoice 3 in 1 siêu mềm mượt 320ml",
+        "size": "19 × 6 × 5 cm"
+    },
+    {
+        "name": "Dầu gội Sunsilk mềm mượt diệu kỳ 874ml",
+        "size": "26 × 8 × 7 cm"
+    },
+    {
+        "name": "Dầu gội nước hoa X-Men Wood thơm lâu sạch sâu 380g",
+        "size": "21 × 7 × 6 cm"
+    },
+    {
+        "name": "Dầu gội nước hoa X-Men For Boss Intense 380g",
+        "size": "21 × 7 × 6 cm"
+    },
+    {
+        "name": "Cá nục xốt cà 3 Cô Gái hộp 155g",
+        "size": "8 × 8 × 4 cm"
+    },
+    {
+        "name": "Heo hầm chay Vissan hộp 150g",
+        "size": "8 × 8 × 4 cm"
+    },
+    {
+        "name": "Gà Sấy Tỏi Ớt Doxaco Gói 100g",
+        "size": "15 × 10 × 3 cm"
+    },
+    {
+        "name": "Gà sấy lá chanh Thảo Nguyên Phát hũ 100g",
+        "size": "8 × 8 × 7 cm"
+    },
+    {
+        "name": "Gà xé lá chanh 150g (Gói)",
+        "size": "18 × 12 × 4 cm"
+    },
+    {
+        "name": "Sáp tạo kiểu tóc Gatsby Hard & Free tỉa lớp lãng tử",
+        "size": "7 × 7 × 6 cm"
+    },
+    {
+        "name": "Gel vuốt tóc Romano Classic giữ nếp lâu",
+        "size": "8 × 8 × 6 cm"
+    },
+    {
+        "name": "Hủ Tiếu Sườn Heo Vifon Gói 65g",
+        "size": "14 × 10 × 2.5 cm"
+    },
+    {
+        "name": "Kem đánh răng Colgate thiên nhiên than tre và bạc hà Hàn Quốc 180g",
+        "size": "19 × 4 × 3.5 cm"
+    },
+    {
+        "name": "Kem Đánh Răng Colgate Maxfresh Than Tre 225g (kèm bàn chải)",
+        "size": "21 × 5 × 4 cm"
+    },
+    {
+        "name": "Kem đánh răng Colgate Thiên Nhiên trà xanh 180g",
+        "size": "19 × 4 × 3.5 cm"
+    },
+    {
+        "name": "Kẹo nhai hương bạc hà DoubleMint hộp 80g",
+        "size": "9 × 6 × 2 cm"
+    },
+    {
+        "name": "Kẹo Coffeeshot Cappuccino Kopiko Gói 140g",
+        "size": "17 × 11 × 3 cm"
+    },
+    {
+        "name": "Kẹo ngậm không đường hương spearmint Mentos pure fresh hộp 35g",
+        "size": "7 × 5 × 5 cm"
+    },
+    {
+        "name": "Kẹo the vị xí muội Play More hũ 22g",
+        "size": "5 × 5 × 4 cm"
+    },
+    {
+        "name": "Nước Lau Sàn Sunlight Hương Hoa Hạ & Bạc Hà Tinh Dầu Thảo Mộc 900g",
+        "size": "28 × 11 × 7 cm"
+    },
+    {
+        "name": "Nước lau nhà Sunlight Cif hương lily & hoa hồng chai 997ml",
+        "size": "29 × 10 × 7 cm"
+    },
+    {
+        "name": "Mắm ruốc huế Sông Hương hũ 200g",
+        "size": "8 × 8 × 7 cm"
+    },
+    {
+        "name": "Miến trộn xốt cua Phú Hương gói 66g",
+        "size": "14 × 10 × 2.5 cm"
+    },
+    {
+        "name": "Miến Phú Hương Thịt Bằm 55g",
+        "size": "14 × 10 × 2 cm"
+    },
+    {
+        "name": "Mì Hảo Hảo gà vàng gói 74g",
+        "size": "15 × 11 × 2.5 cm"
+    },
+    {
+        "name": "Mì Hảo Hảo vị tôm chua cay gói 75g",
+        "size": "15 × 11 × 2.5 cm"
+    },
+    {
+        "name": "Mì Lẩu Thái tôm gói 81g",
+        "size": "15 × 11 × 3 cm"
+    },
+    {
+        "name": "Mì bò nấu dưa chua Omachi 102 gói 120g",
+        "size": "16 × 12 × 3.5 cm"
+    },
+    {
+        "name": "Mì khoai tây Omachi sườn hầm ngũ quả ly 115g (có cây thịt thật)",
+        "size": "11 × 11 × 10 cm"
+    },
+    {
+        "name": "Mì nấu Omachi 4 phút vị bò hầm gói 100g",
+        "size": "16 × 12 × 3 cm"
+    },
+    {
+        "name": "Mì trộn Omachi xốt tôm phô mai trứng muối hộp 105g",
+        "size": "13 × 13 × 7 cm"
+    },
+    {
+        "name": "Mì khoai tây Omachi tôm chua cay Thái ly 111g (có cây thịt thật)",
+        "size": "11 × 11 × 10 cm"
+    },
+    {
+        "name": "Mì khoai tây Omachi sườn hầm ngũ quả hộp 95g",
+        "size": "13 × 13 × 6 cm"
+    },
+    {
+        "name": "Mì Hai Tôm Vifon gói 75g (có gói dầu sa tế)",
+        "size": "15 × 11 × 2.5 cm"
+    },
+    {
+        "name": "Mì lẩu Thái Tomyum Vifon Ngon Ngon ly 60g",
+        "size": "9 × 9 × 8 cm"
+    },
+    {
+        "name": "Mì trộn xốt gà chua cay Vifon ly 75g",
+        "size": "9 × 9 × 8 cm"
+    },
+    {
+        "name": "Mì Xào Vifon Tương Đen Khay 90G",
+        "size": "18 × 13 × 3 cm"
+    },
+    {
+        "name": "Muối Ớt Tôm Chay 80g",
+        "size": "10 × 7 × 3 cm"
+    },
+    {
+        "name": "Chà Bông Cá Hồi Salmon Flake Việt EU (150g)/ 200g/ 65g  (hũ)",
+        "size": "9 × 9 × 10 cm"
+    },
+    {
+        "name": "Ngũ cốc dinh dưỡng VinaCafé B'fast bịch 500g",
+        "size": "23 × 16 × 6 cm"
+    },
+    {
+        "name": "Ngũ cốc dinh dưỡng nguyên cám NutiFood bịch 500g",
+        "size": "23 × 16 × 6 cm"
+    },
+    {
+        "name": "Nước cam ép Twister Tropicana 1 lít",
+        "size": "27 × 7 × 7 cm"
+    },
+    {
+        "name": "Xịt khử mùi X-Men For Boss Legend 150ml",
+        "size": "15 × 4 × 4 cm"
+    },
+    {
+        "name": "Nước mắm cá cơm siêu hạng Hưng Thịnh 35 độ đạm chai 620ml",
+        "size": "30 × 7 × 7 cm"
+    },
+    {
+        "name": "Nước tương Nhị Ca Tam Thái Tử chai 500ml",
+        "size": "28 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước tinh khiết Aquafina 500ml",
+        "size": "24 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước ngọt Pepsi Cola lon 320ml",
+        "size": "12,5 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước ngọt Pepsi Cola chai 1.5 lít",
+        "size": "32 × 8 × 8 cm"
+    },
+    {
+        "name": "Nước ngọt Pepsi Cola lon 320ml",
+        "size": "12,5 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước tăng lực Redbull Thái lon 250ml",
+        "size": "11,5 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước tăng lực Redbull Thái lon 250ml",
+        "size": "11,5 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước tăng lực Sting hương dâu 330ml",
+        "size": "14 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước tăng lực Wake Up 247 vị cà phê 330ml",
+        "size": "14 × 6 × 6 cm"
+    },
+    {
+        "name": "Nước tăng lực Wake Up 247 vị cà phê 330ml",
+        "size": "14 × 6 × 6 cm"
+    },
+    {
+        "name": "6 chai nước tăng lực Wake Up 247 vị cà phê 330ml  (lốc 6 chai)",
+        "size": "22 × 15 × 20 cm"
+    },
+    {
+        "name": "Nước tăng lực Wake Up 247 vị cà phê 330ml",
+        "size": "14 × 6 × 6 cm"
+    },
+    {
+        "name": "6 chai nước tăng lực Wake Up 247 vị cà phê 330ml  (lốc 6 chai)",
+        "size": "22 × 15 × 20 cm"
+    },
+    {
+        "name": "Nước tăng lực Warrior hương dâu lon 325ml",
+        "size": "13,5 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước rửa chén Sunlight Chanh 100 đánh bay dầu mỡ cứng đầu chai 725ml",
+        "size": "27 × 8,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước rửa chén Sunlight thiên nhiên lô hội chai 717ml",
+        "size": "27 × 8,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước rửa tay Lifebuoy bảo vệ vượt trội chai 177ml",
+        "size": "15 × 6 × 4 cm"
+    },
+    {
+        "name": "Snack phồng mực Oishi Indo Chips gói 32g",
+        "size": "17 × 12 × 4 cm"
+    },
+    {
+        "name": "Đậu phộng vị nước cốt dừa Poca Nutz gói 75g",
+        "size": "18 × 13 × 4 cm"
+    },
+    {
+        "name": "Combo 2 hộp Sữa Đặc Có Đường Dairy Champ Lon 1Kg  (2 lon)",
+        "size": "22 × 11 × 11 cm"
+    },
+    {
+        "name": "Sữa đặc có đường Ông Thọ Trắng nhãn xanh lon 380g",
+        "size": "8,5 × 8,5 × 10 cm"
+    },
+    {
+        "name": "Kem đặc có đường Ngôi sao Phương Nam Xanh lá hộp 380g",
+        "size": "8,5 × 8,5 × 10 cm"
+    },
+    {
+        "name": "Sữa tắm sáng da Fresh hương hoa tử linh lan 1.2kg",
+        "size": "28 × 11 × 7,5 cm"
+    },
+    {
+        "name": "Sữa tắm dưỡng sáng Hazeline matcha lựu đỏ 800g",
+        "size": "25 × 10 × 7 cm"
+    },
+    {
+        "name": "Sữa tắm Lifebuoy công thức Vitamin + bảo vệ khỏi 99.9% vi khuẩn gây bệnh 245ml",
+        "size": "17 × 7 × 4,5 cm"
+    },
+    {
+        "name": "Sữa tắm sạch khuẩn Romano Attitude 180g",
+        "size": "15 × 6 × 4 cm"
+    },
+    {
+        "name": "Sữa tắm dưỡng ẩm Vaseline Healthy Moisturizing Body Wash (850ml)",
+        "size": "26 × 10 × 7 cm"
+    },
+    {
+        "name": "Sữa tắm Xmen Fire Active 650g - 17159",
+        "size": "24 × 9 × 7 cm"
+    },
+    {
+        "name": "Lốc 4 hộp sữa tươi tiệt trùng không đường Dutch Lady 180ml  (lốc 4 hộp)",
+        "size": "12 × 10 × 4 cm"
+    },
+    {
+        "name": "Sữa Milk Milk Canxi người già 900g  (lon)",
+        "size": "20 × 12 × 12 cm"
+    },
+    {
+        "name": "Lốc 4 hộp sữa lúa mạch Milo 180ml  (lốc 4 hộp)",
+        "size": "12 × 10 × 4 cm"
+    },
+    {
+        "name": "Bột thức uống lúa mạch vị chocolate Ovaltine hũ 400g",
+        "size": "13 × 9 × 9 cm"
+    },
+    {
+        "name": "Lốc 6 chai sữa chua uống tiệt trùng cam SuSu có thạch 80ml  (lốc 6 chai)",
+        "size": "13 × 9 × 6 cm"
+    },
+    {
+        "name": "Nước súc miệng Listerine Cool Mint hương bạc hà 750ml",
+        "size": "24 × 9 × 7 cm"
+    },
+    {
+        "name": "Nước tẩy bồn cầu Duck hương cam quýt chai 500ml",
+        "size": "23 × 8 × 6 cm"
+    },
+    {
+        "name": "Vim Tẩy Bồn Cầu Diệt Khuẩn 900ml Đậm Đặc",
+        "size": "28 × 10 × 7 cm"
+    },
+    {
+        "name": "Trà xanh C2 hương chanh 225ml",
+        "size": "17 × 5,5 × 5,5 cm"
+    },
+    {
+        "name": "Trà đào và hạt chia Fuze Tea 450ml",
+        "size": "21 × 6 × 6 cm"
+    },
+    {
+        "name": "Trà hoa cúc hán linh (túi lọc 40g)",
+        "size": "13 × 9 × 6 cm"
+    },
+    {
+        "name": "6 chai trà xanh Không Độ vị chanh 455ml  (lốc 6 chai)",
+        "size": "23 × 15 × 10 cm"
+    },
+    {
+        "name": "Trà đen túi lọc Lipton nhãn vàng hộp 50g (25 túi x 2g)",
+        "size": "8 × 8 × 7 cm"
+    },
+    {
+        "name": "Trà Chanh Lipton Chanh Mật Ong Hộp 16 Gói 12g",
+        "size": "10 × 8 × 6 cm"
+    },
+    {
+        "name": "Trà ô long Tea Plus 320ml",
+        "size": "18 × 6 × 6 cm"
+    },
+    {
+        "name": "Bình xịt muỗi Jumbo Vape F10 hương cam chanh 600ml",
+        "size": "29 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "Bình xịt muỗi, kiến, côn trùng KING STAR 600ml",
+        "size": "29 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "2 Bình xịt muỗi, kiến, côn trùng WUDIJIAN 600ml  (2 chai)",
+        "size": "29 × 13 × 6,5 cm"
+    },
+    {
+        "name": "Bình xịt côn trùng Raid không mùi 600ml",
+        "size": "29 × 6,5 × 6,5 cm"
+    },
+    {
+        "name": "Nước hoa xịt phòng Spring Hương Hồng Phấn 280ml",
+        "size": "21 × 5,5 × 5,5 cm"
+    },
+    {
+        "name": "Nước hoa xịt phòng Spring hương phấn 250ml",
+        "size": "20 × 5 × 5 cm"
+    },
+    {
+        "name": "Xúc xích vị heo hầm hạt sen Bé Khoẻ gói 115g (5 cây x 23g)",
+        "size": "14 × 10 × 2 cm"
+    },
+    {
+        "name": "Xúc xích bò tiệt trùng Vissan gói 90g (5 cây x 18g)",
+        "size": "13 × 9 × 2 cm"
+    },
+    {
+        "name": "Hộp nước yến sào Sanest Không Đường lon 190ml (6 lon)",
+        "size": "12 × 18 × 12 cm"
+    },
+    {
+        "name": "Nước yến sào Khánh Hòa 70ml",
+        "size": "9 × 4,5 × 4,5 cm"
+    },
+    {
+        "name": "Nước yến sào Khánh Hòa 70ml",
+        "size": "9 × 4,5 × 4,5 cm"
+    },
+    {
+        "name": "Nước yến Queenest, tổ yến thiên nhiên 70ml",
+        "size": "9 × 4,5 × 4,5 cm"
+    },
+    {
+        "name": "Lốc 6 Nước Yến Queenest 70ml",
+        "size": "9 × 13,5 × 9 cm"
+    },
+    {
+        "name": "Yến sào Khánh Hòa Sanest (hộp 6 lọ × 70ml)",
+        "size": "9 × 13,5 × 9 cm"
+    },
+    {
+        "name": "[Siêu thị WinMart] - Nước yến sào cao cấp Khánh Hòa Sanest hộp 6 lọ × 70ml",
+        "size": "9 × 13,5 × 9 cm"
+    },
+    {
+        "name": "Đậu phộng da cá vị nước cốt dừa Poca gói 42g",
+        "size": "12 × 8 × 2 cm"
+    }
+]

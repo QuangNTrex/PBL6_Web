@@ -56,6 +56,7 @@ function App() {
   const access_token = localStorage.getItem('access_token');
 
   useEffect(() => {
+    if(!access_token) return;
     fetch(API_URL + "auth/me", {
         method: "GET",
         headers: {

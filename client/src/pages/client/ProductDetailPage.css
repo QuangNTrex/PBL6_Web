@@ -159,3 +159,40 @@
     font-size: 20px;
   }
 }
+
+/* tbody */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+table td {
+  border: 1px solid #f1f1f1;
+  padding: 10px 14px;
+  vertical-align: top;
+}
+
+table td:first-child {
+  width: 180px; /* cột tiêu đề nhỏ hơn */
+  background-color: #f4f6f9;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+table td:last-child {
+  width: auto;
+}
+
+table td div {
+  text-align: justify;
+}
+
+/* Hiệu ứng hover cho dòng */
+table tr:hover {
+  background-color: #fafafa;
+}
+
