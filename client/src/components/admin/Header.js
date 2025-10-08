@@ -55,13 +55,13 @@ const Header = () => {
             </div>
            <ul>
               <li>
-                <Link to="/admin/profile">Tài khoản của tôi</Link>
+                <Link to="/">Trang chủ</Link>
+              </li>
+              <li>
+                <Link to="/profile">Tài khoản của tôi</Link>
               </li>
               <li>
                 <Link to="/admin/settings">Cài đặt</Link>
-              </li>
-              <li>
-                <Link to="/">Trang chủ</Link>
               </li>
               <li>
                 <Link onClick={logoutHandler}>Đăng xuất</Link>

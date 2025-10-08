@@ -12,11 +12,6 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/admin/scan-product">
-            Scan product
-          </NavLink>
-        </li>
-        <li>
           <NavLink to="/admin/orders">
             Orders
           </NavLink>

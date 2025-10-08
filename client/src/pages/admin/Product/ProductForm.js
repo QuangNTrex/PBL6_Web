@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./ProductForm.css";
 
 const ProductForm = ({ categories, initialData = {}, onSubmit, onCancel }) => {
+  if (!initialData.category) {
+    initialData.category = {}
+  }
   const [formData, setFormData] = useState({
     code: "",
     name: "",

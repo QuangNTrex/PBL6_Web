@@ -59,3 +59,13 @@
   background: #f8d7da;
   color: #721c24;
 }
+
+.btn-order-detail {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 0;
+  background: #d4edda;
+  color: #155724;
+}

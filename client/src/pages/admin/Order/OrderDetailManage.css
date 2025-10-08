@@ -1,0 +1,121 @@
+/* Container chính */
+.order-detail-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Tiêu đề */
+.order-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+/* Card thông tin */
+.order-card {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.order-card p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+/* Section trạng thái */
+.status-section {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.status-section label {
+  margin-right: 12px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.status-section select {
+  padding: 8px 12px;
+  margin-right: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.3s ease;
+}
+
+.status-section select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.status-section button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.status-section button:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Sản phẩm */
+.order-products {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.order-products h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+/* Bảng */
+.order-products table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.order-products th,
+.order-products td {
+  border: 1px solid #eaeaea;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.order-products th {
+  background: #f7f9fc;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.order-products tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.order-products tr:hover {
+  background: #f0f8ff;
+  transition: background 0.2s ease;
+}

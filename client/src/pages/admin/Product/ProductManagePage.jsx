@@ -177,7 +177,7 @@ const ProductManagePage = () => {
               <td>{p.name}</td>
               <td>{p.price}</td>
               <td>{p.quantity}</td>
-              <td>{p.category.name}</td>
+              <td>{p.category ? p.category.name : null}</td>
               <td>
                 <button onClick={() => handleEdit(p)}>✏ Sửa</button>
                 <button onClick={() => handleDelete(p.id)}>🗑 Xóa</button>

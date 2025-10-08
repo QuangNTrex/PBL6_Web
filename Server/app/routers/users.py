@@ -23,6 +23,13 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+#lấy user theo số điên thoại
+@router.get("/phone/{phone}", response_model=schemas.UserOut)
+def get_user_by_phone(phone: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.phone == phone).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 # 🟢 API: Cập nhật thông tin user
 @router.put("/{user_id}", response_model=schemas.UserOut)

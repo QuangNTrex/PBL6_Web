@@ -7,15 +7,16 @@ const Sidebar = () => {
     <aside className="admin-sidebar">
       <ul>
         <li>
-          <NavLink to="/staff/scan-product">
-            Scan product
-          </NavLink>
-        </li>
-        <li>
           <NavLink to="/staff/orders">
             Orders
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/staff/scan-product">
+            Scan product
+          </NavLink>
+        </li>
+        
         <li>
           <NavLink to="/staff/products">
             Products

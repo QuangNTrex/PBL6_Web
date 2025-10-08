@@ -5,6 +5,8 @@ import StaffLayout from "./layouts/StaffLayout";
 import ProductStaffManagePage from "./pages/staff/Product/ProductStaffManagePage";
 import { API_URL } from "./utils/lib";
 import { clearUser, setUser } from "./redux/userSlice";
+import OrderDetailManage from "./pages/admin/Order/OrderDetailManage";
+import CheckoutStaffPage from "./pages/staff/Checkout/CheckoutStaffPage";
 
 // Layouts
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
@@ -23,6 +25,7 @@ const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
 const ScanProductPage = lazy(() => import("./pages/admin/ScanProduct/ScanProductPage"));
 // Staff Pages
 const OrderStaffManagementPage = lazy(() => import("./pages/staff/Order/OrderStaffManagementPage"));
+
 
 // Client Pages
 const Home = lazy(() => import("./pages/client/Home"));
@@ -108,6 +111,7 @@ function App() {
           <Route path="products" element={<ProductManagePage />} />
           <Route path="users" element={<UserManagePage />} />
           <Route path="orders" element={<OrderManagementPage />} />
+          <Route path="order/:id" element={<OrderDetailManage />} />
           <Route path="scan-product" element={<ScanProductPage />} />
         </Route>
         {/* staff */}
@@ -120,8 +124,10 @@ function App() {
           }
         >
           <Route path="scan-product" element={<ScanProductPage />} />
+          <Route path="checkout" element={<CheckoutStaffPage />} />
           <Route path="orders" element={<OrderStaffManagementPage />} />
           <Route path="products" element={<ProductStaffManagePage />} />
+          <Route path="" element={<Navigate to="/staff/orders" replace></Navigate>}/>
         </Route>
 
         {/* Fallback */}

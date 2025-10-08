@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./OrderManagementPage.css";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:8000"; // đổi theo backend của bạn
 
 const statusLabels = {
-  pending: "⏳ Chờ xác nhận",
-  confirmed: "✅ Đã xác nhận",
-  shipping: "🚚 Đang giao",
-  completed: "🎉 Hoàn tất",
-  cancelled: "❌ Đã hủy",
+  pending: " Chờ xác nhận",
+  confirmed: " Đã xác nhận",
+  shipping: " Đang giao",
+  completed: " Hoàn tất",
+  cancelled: " Đã hủy",
 };
 
 export default function OrderManagementPage() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -75,6 +77,7 @@ export default function OrderManagementPage() {
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
               <th>Ngày đặt</th>
+              <th>Chi tiết</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -95,6 +98,9 @@ export default function OrderManagementPage() {
                     </span>
                   </td>
                   <td>{new Date(order.created_at).toLocaleString()}</td>
+                  <td>
+                    <button className="btn-order-detail" onClick={() => {navigate("/admin/order/" + order.id)}}>Chi tiết đơn hàng</button>
+                  </td>
                   <td>
                     <select
                       value={order.status}
