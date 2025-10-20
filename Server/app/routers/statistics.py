@@ -82,7 +82,7 @@ def get_latest_orders(db: Session = Depends(get_db)):
 def get_latest_customers(db: Session = Depends(get_db)):
     users = (
         db.query(models.User)
-        .filter(models.User.role == "customer")
+        .filter(models.User.role == "customer" or models.User.role == "staff")
         .order_by(models.User.created_at.desc())
         .limit(5)
         .all()

@@ -71,75 +71,89 @@ def image_loop(stop_event, raw_frame_buffer, frame_lock):
 # ============================================================
 # 🧩 3. YOLO DETECTION PROCESS
 # ============================================================
-def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detected_labels_history, frame_lock_raw, frame_lock_detect, detected_labels_lock):
+def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detected_labels_history,
+                     frame_lock_raw, frame_lock_detect, detected_labels_lock):
     """Process phát hiện sản phẩm từ ảnh nhận được (YOLOv8)."""
     import cv2
     import numpy as np
     import time
     from ultralytics import YOLO
+    from collections import Counter
+    import torch
 
-    # Load model YOLO
     print("🧠 Đang tải mô hình YOLO...")
-    model = YOLO("model/epoch5.pt")
-    model.to("cuda")
-    print("✅ Mô hình YOLO đã sẵn sàng.")
+    model = YOLO("model/no_mosaic_sgd_0284.pt")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
+    print(f"✅ Mô hình YOLO đã sẵn sàng trên {device.upper()}.")
 
     prev_time = time.time()
+    last_detect_time = 0
 
+    # Cấu hình: resize để tăng tốc
+    TARGET_SIZE = (640, 480)
+    MIN_INTERVAL = 1 / 30  # tối đa 30fps inference
 
     while not stop_event.is_set():
-        start_detect_time = time.time()
+        loop_start = time.time()
+
+        # --- Đọc frame an toàn ---
         with frame_lock_raw:
             jpg_buffer = raw_frame_buffer.value
 
         if not jpg_buffer:
-            time.sleep(0.5)
+            time.sleep(0.01)
             continue
 
-        # Giải mã JPEG thành ảnh OpenCV
+        # --- Giải mã JPEG thành ảnh ---
         nparr = np.frombuffer(jpg_buffer, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if frame is None:
+            time.sleep(0.01)
             continue
 
-        # Detect sản phẩm
-        results = model(frame, conf=0.75, verbose=False)
-        annotated_frame = results[0].plot()
+        # --- Resize để tối ưu tốc độ ---
+        frame_resized = cv2.resize(frame, TARGET_SIZE)
 
-        frame_labels = []
+        # --- Detect sản phẩm ---
+        results = model.predict(frame_resized, conf=0.4,iou=0.45, verbose=False, stream=False)
+        result = results[0]
 
-        for box in results[0].boxes:
-            cls_id = int(box.cls[0])
-            label = model.names[cls_id]
-            frame_labels.append(label)
+        annotated_frame = result.plot()
 
-        # --- 📝 Lưu vào danh sách lịch sử ---
+        # --- Lấy nhãn & đếm số lượng ---
+        boxes = result.boxes
+        if boxes is not None and len(boxes) > 0:
+            cls_ids = boxes.cls.cpu().numpy().astype(int)
+            labels = [model.names[i] for i in cls_ids]
+        else:
+            labels = []
+
         with detected_labels_lock:
-            label_counts = Counter(frame_labels)
-            merged_labels = [{"label": lbl, "quantity": cnt, "time": time.time()} for lbl, cnt in label_counts.items()]
+            label_counts = Counter(labels)
+            detected_labels_history[:] = [
+                {"label": lbl, "quantity": cnt, "time": time.time()}
+                for lbl, cnt in label_counts.items()
+            ]
 
-            detected_labels_history[:] = merged_labels
-       
-        # Tính FPS
-        current_time = time.time()
-        fps = 1 / (current_time - prev_time) if (current_time - prev_time) > 0 else 0
-        prev_time = current_time
+        # --- Tính FPS ---
+        now = time.time()
+        fps = 1.0 / (now - prev_time) if (now - prev_time) > 0 else 0
+        prev_time = now
+
         cv2.putText(annotated_frame, f"FPS: {int(fps)}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        # Mã hóa lại thành JPEG để stream
-        ret, encoded_jpg = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
-        if not ret:
-            continue
+        # --- Mã hóa lại để stream ---
+        success, encoded = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+        if success:
+            with frame_lock_detect:
+                detected_frame_buffer.value = encoded.tobytes()
 
-        jpg_bytes = bytes(encoded_jpg)
-
-        # Lưu kết quả vào buffer chia sẻ
-        with frame_lock_detect:
-            detected_frame_buffer.value = jpg_bytes
-        
-        if time.time() - start_detect_time < 0.03333: #ổn định ở 30fps
-            time.sleep(0.03333 - (time.time() - start_detect_time))
+        # --- Giữ nhịp ổn định ---
+        elapsed = time.time() - loop_start
+        if elapsed < MIN_INTERVAL:
+            time.sleep(MIN_INTERVAL - elapsed)
 
     print("🧠 YOLO detection process kết thúc.")
 
