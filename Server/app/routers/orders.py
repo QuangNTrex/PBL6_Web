@@ -5,6 +5,29 @@ from typing import List
 from app import models, schemas
 from app.database import get_db
 from ..core.auth_middleware import get_current_user
+import paho.mqtt.client as mqtt
+import json
+
+# ========== MQTT Setup ==========
+MQTT_BROKER = "broker.hivemq.com"
+MQTT_PORT = 1883
+MQTT_TOPIC = "pbl6/products"
+
+mqtt_client = mqtt.Client()
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("[MQTT Orders] Connected successfully to broker.")
+    else:
+        print(f"[MQTT Orders] Failed to connect, return code {rc}")
+
+try:
+    mqtt_client.on_connect = on_connect
+    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    mqtt_client.loop_start()
+except Exception as e:
+    print(f"[ERROR] Could not start MQTT client in orders.py: {e}")
+# ==============================
 
 router = APIRouter(
     prefix="/orders",
@@ -40,6 +63,20 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
 
     db.commit()
     db.refresh(db_order)
+
+    # --- Send Total Price via MQTT ---
+    try:
+        payload = {
+            "label": "Total Price",
+            "price": order.total_amount,
+            "quantity": 1
+        }
+        mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
+        print(f"[MQTT] Published Total Price to {MQTT_TOPIC}: {payload}")
+    except Exception as e:
+        print(f"[ERROR] Failed to publish total price via MQTT: {e}")
+    # ---------------------------------
+
     return db_order
 
 

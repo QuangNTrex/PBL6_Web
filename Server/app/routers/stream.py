@@ -290,24 +290,29 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
     async def merge_label_generate(buffer, lock, db_session):
         detected_label = []
         current_time = time.time()
-        last_sent_len = -1 # Track the length of last sent frames
+        was_detecting = False # Track previous state
 
         while True:
             await asyncio.sleep(0.04)
             with lock:
+                # Assuming buffer holds the latest frame's labels
                 detected_label.append(list(buffer))
+            
             if time.time() - current_time >= 1:
-                current_time = time.time()
+                current_time = time.time()        
                 merged_segments, representative_frames, total_labels_array = process_segments(detected_label)
                 
-                # --- MQTT Publishing Logic ---
-                # Only publish if the number of representative frames has changed
-                if len(representative_frames) != last_sent_len:
-                    print(f"[MQTT] Frame count changed from {last_sent_len} to {len(representative_frames)}. Preparing to publish.")
-                    try:
-                        if len(representative_frames) >= 2:
-                            # Get the second to last representative frame as originally requested
-                            target_frame = representative_frames[-2]
+                # --- State-Transition MQTT Logic ---
+                try:
+                    is_detecting = bool(merged_segments and merged_segments[-1]['type'] == 'detect')
+
+                    # Check for transition from detect to silence
+                    if was_detecting and not is_detecting:
+                        print("[MQTT] State changed from 'detect' to 'silence'. Publishing last detected items.")
+                        
+                        # Publish info from the last representative frame
+                        if representative_frames:
+                            target_frame = representative_frames[-1]
                             labels_in_frame = target_frame.get("representative_labels", [])
                             
                             for item in labels_in_frame:
@@ -323,18 +328,16 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
                                             "quantity": quantity
                                         }
                                         mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
-                                        print(f"[MQTT] Published on len change: {payload}")
-                                    else:
-                                        print(f"[DB] Product with code '{product_code}' not found.")
-                    except Exception as e:
-                        print(f"[ERROR] Failed during MQTT publish process: {e}")
-                    finally:
-                        # Update the last sent length after processing
-                        last_sent_len = len(representative_frames)
+                                        print(f"[MQTT] Published on state change: {payload}")
+
+                    # Update the state for the next iteration
+                    was_detecting = is_detecting
+
+                except Exception as e:
+                    print(f"[ERROR] Failed during MQTT publish process: {e}")
 
                 yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\n\n"
 
-        
     return StreamingResponse(merge_label_generate(buffer, lock, db), media_type="text/event-stream")
 
 @router.get("/product_feedd")
