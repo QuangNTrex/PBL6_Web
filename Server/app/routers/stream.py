@@ -4,12 +4,39 @@ from ctypes import c_char_p
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
+import paho.mqtt.client as mqtt
+from sqlalchemy.orm import Session
+from app.crud import products as crud_products
+from app import models
+from app.database import get_db
+
 
 # Import các modules của ứng dụng
 from collections import Counter
-from app import models
 import asyncio
 import json
+
+# ========== MQTT Setup ==========
+MQTT_BROKER = "broker.hivemq.com"
+MQTT_PORT = 1883
+MQTT_TOPIC = "pbl6/products"
+
+mqtt_client = mqtt.Client()
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("[MQTT] Connected successfully to broker.")
+    else:
+        print(f"[MQTT] Failed to connect, return code {rc}")
+
+try:
+    mqtt_client.on_connect = on_connect
+    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    mqtt_client.loop_start()
+except Exception as e:
+    print(f"[ERROR] Could not start MQTT client: {e}")
+# ==============================
+
 
 router = APIRouter(prefix="/stream", tags=["Stream"])
 def detect_segments(frames_labels, min_detect=60, min_silence=15):
@@ -111,7 +138,6 @@ def choose_representative_frames(frames_labels, segments):
     return results
 
 
-
 def generate_mjpeg_stream(shared_frame_buffer, frame_lock):
     mjpeg_header = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'
     while True:
@@ -200,7 +226,7 @@ def process_segments(frames_labels, silence_threshold=20):
         # Chuẩn hóa mỗi frame để so sánh (label + quantity)
         frame_serialized = [
             json.dumps(sorted(
-                [{"label": item["label"], "quantity": item["quantity"]}
+                [{"label": item["label"], "quantity": item["quantity"]} 
                  for item in frame],
                 key=lambda x: x["label"]
             ))
@@ -258,12 +284,14 @@ async def label_feed(request: Request):
     return StreamingResponse(event_generator(buffer, lock), media_type="text/event-stream")
 
 @router.get("/product_feed")
-async def label_feed(request: Request):
+async def label_feed(request: Request, db: Session = Depends(get_db)):
     buffer = request.app.state.detected_labels_history
     lock = request.app.state.detected_labels_lock
-    async def merge_label_generate(buffer, lock):
+    async def merge_label_generate(buffer, lock, db_session):
         detected_label = []
         current_time = time.time()
+        last_sent_len = -1 # Track the length of last sent frames
+
         while True:
             await asyncio.sleep(0.04)
             with lock:
@@ -271,10 +299,43 @@ async def label_feed(request: Request):
             if time.time() - current_time >= 1:
                 current_time = time.time()
                 merged_segments, representative_frames, total_labels_array = process_segments(detected_label)
+                
+                # --- MQTT Publishing Logic ---
+                # Only publish if the number of representative frames has changed
+                if len(representative_frames) != last_sent_len:
+                    print(f"[MQTT] Frame count changed from {last_sent_len} to {len(representative_frames)}. Preparing to publish.")
+                    try:
+                        if len(representative_frames) >= 2:
+                            # Get the second to last representative frame as originally requested
+                            target_frame = representative_frames[-2]
+                            labels_in_frame = target_frame.get("representative_labels", [])
+                            
+                            for item in labels_in_frame:
+                                product_code = item.get("label")
+                                quantity = item.get("quantity")
+                                
+                                if product_code:
+                                    product_db = crud_products.get_product_by_code(db=db_session, code=product_code)
+                                    if product_db:
+                                        payload = {
+                                            "label": product_db.code,
+                                            "price": product_db.price,
+                                            "quantity": quantity
+                                        }
+                                        mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
+                                        print(f"[MQTT] Published on len change: {payload}")
+                                    else:
+                                        print(f"[DB] Product with code '{product_code}' not found.")
+                    except Exception as e:
+                        print(f"[ERROR] Failed during MQTT publish process: {e}")
+                    finally:
+                        # Update the last sent length after processing
+                        last_sent_len = len(representative_frames)
+
                 yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\n\n"
 
         
-    return StreamingResponse(merge_label_generate(buffer, lock), media_type="text/event-stream")
+    return StreamingResponse(merge_label_generate(buffer, lock, db), media_type="text/event-stream")
 
 @router.get("/product_feedd")
 async def label_feed(request: Request):
@@ -288,7 +349,7 @@ async def label_feed(request: Request):
                 detected_label.append(list(buffer))
             segment_label = detect_segments(detected_label)
             result = choose_representative_frames(frames_labels=detected_label, segments=segment_label)
-            yield f"data: {json.dumps(result)}\n\n"
+            yield f"data: {json.dumps(result)}\\n\n"
 
         
         
