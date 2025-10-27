@@ -212,6 +212,14 @@ def process_segments(frames_labels, silence_threshold=20):
             else:
                 merged_segments.append(seg)
 
+    # ===================================================================
+    # 5.Các khoảng detect nhỏ hơn threshold (5) => chuyển sang skip
+    # ===================================================================
+    detect_threshold = 5
+    for seg in merged_segments:
+        if seg["type"] == "detect" and (seg["end"] - seg["start"] + 1) < detect_threshold:
+            seg["type"] = "skip"
+
     # ============================================================
     # 4️⃣ Chọn frame trùng lặp nhiều nhất trong từng khoảng detect
     # ============================================================
@@ -336,7 +344,7 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
                 except Exception as e:
                     print(f"[ERROR] Failed during MQTT publish process: {e}")
 
-                yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\n\n"
+                yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\\n\n"
 
     return StreamingResponse(merge_label_generate(buffer, lock, db), media_type="text/event-stream")
 
@@ -352,7 +360,7 @@ async def label_feed(request: Request):
                 detected_label.append(list(buffer))
             segment_label = detect_segments(detected_label)
             result = choose_representative_frames(frames_labels=detected_label, segments=segment_label)
-            yield f"data: {json.dumps(result)}\\n\n"
+            yield f"data: {json.dumps(result)}\\n\\n"
 
         
         
