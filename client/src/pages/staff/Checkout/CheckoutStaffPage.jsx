@@ -30,10 +30,10 @@ export default function CheckoutStaffPage() {
 
   // 🟢 Submit đơn hàng
   const handleSubmit = async () => {
-    if (!address) {
-      alert("Vui lòng nhập địa chỉ giao hàng!");
-      return;
-    }
+    // if (!address) {
+    //   alert("Vui lòng nhập địa chỉ giao hàng!");
+    //   return;
+    // }
 
     const orderData = {
       user_id: user.id, // TODO: thay bằng user_id từ Redux/Auth
@@ -135,13 +135,6 @@ export default function CheckoutStaffPage() {
             readOnly={true}
           />
         </label>
-        <label>
-          Địa chỉ giao hàng:
-          <input
-            type="text"
-            value={customer.address}
-          />
-        </label>
 
         <label>
           Ghi chú:
@@ -168,7 +161,7 @@ export default function CheckoutStaffPage() {
 
       {/* Nút xác nhận */}
       <button className="checkout-btn" onClick={handleSubmit}>
-        Xác nhận đặt hàng
+        Xác nhận thanh toán
       </button>
     </div>
   );

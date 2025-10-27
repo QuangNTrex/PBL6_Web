@@ -338,13 +338,13 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
                                         mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
                                         print(f"[MQTT] Published on state change: {payload}")
 
-                    # Update the state for the next iteration
+                    # Update the state for the nπext iteration
                     was_detecting = is_detecting
 
                 except Exception as e:
                     print(f"[ERROR] Failed during MQTT publish process: {e}")
 
-                yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\\n\n"
+                yield f"data: {json.dumps({'merged_segments': merged_segments, 'representative_frames': representative_frames, 'total_labels_array': total_labels_array})}\n\n"
 
     return StreamingResponse(merge_label_generate(buffer, lock, db), media_type="text/event-stream")
 
