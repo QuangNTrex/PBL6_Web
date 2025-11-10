@@ -67,7 +67,7 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     # --- Send Total Price via MQTT ---
     try:
         payload = {
-            "label": "Total Price",
+            "label": "Thanh Tien",
             "price": order.total_amount,
             "quantity": 1
         }

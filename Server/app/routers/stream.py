@@ -169,7 +169,7 @@ import json
 def process_segments(
     frames_labels,
     silence_threshold=20,
-    trend_window=12,       # số frame gần nhất để xét xu hướng
+    trend_window=25,       # số frame gần nhất để xét xu hướng
     trend_min_len=5,       # tối thiểu bao nhiêu frame trong window mới xét trend
     min_drop=1,            # tổng mức giảm tối thiểu (VD: từ 3 xuống 2 => 1)
     decrease_ratio=0.6,    # tỉ lệ số bước giảm trong các bước thay đổi phải >= 60%
@@ -296,7 +296,7 @@ def process_segments(
     total_labels_array = [{"label": lbl, "quantity": qty} for lbl, qty in total_labels.items()]
 
     # ============================================================
-    # 6️⃣ Phát hiện "xu hướng giảm" trên detect-segment cuối cùng
+    # 6. Phát hiện "xu hướng giảm" trên detect-segment cuối cùng
     #     - Chỉ xét trong detect-segment cuối
     #     - Chịu nhiễu: cho phép tăng nhẹ nhưng tổng thể đi xuống
     # ============================================================
@@ -314,6 +314,7 @@ def process_segments(
         # Xét cửa sổ gần cuối
         if counts:
             window = counts[-trend_window:] if len(counts) > trend_window else counts
+            print(window)
             if len(window) >= trend_min_len:
                 diffs = [window[i] - window[i - 1] for i in range(1, len(window))]
                 decreases = sum(1 for d in diffs if d < 0)
@@ -325,7 +326,7 @@ def process_segments(
                 min_val = min(window)
                 near_bottom = last_val <= (min_val + near_bottom_tol)
 
-                if (net_drop <= -min_drop) and (ratio_dec >= decrease_ratio) and near_bottom:
+                if (net_drop <= -min_drop) and (ratio_dec >= decrease_ratio):
                     # Tìm representative frame tương ứng với detect-segment cuối
                     target_rep = None
                     for rep in reversed(representative_frames):
