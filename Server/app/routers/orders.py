@@ -69,7 +69,7 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
         payload = {
             "label": "Thanh Tien",
             "price": order.total_amount,
-            "quantity": 1
+            "quantity": 0
         }
         mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
         print(f"[MQTT] Published Total Price to {MQTT_TOPIC}: {payload}")
