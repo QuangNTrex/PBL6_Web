@@ -119,3 +119,74 @@
   background: #f0f8ff;
   transition: background 0.2s ease;
 }
+
+/* Container cho nút */
+td button {
+    margin-right: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+/* Bố cục nút trong ô hành động */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+/* Style nút chung */
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+/* Màu các nút */
+.btn.blue {
+  background: #1e90ff;
+}
+.btn.blue:hover {
+  background: #0b6cd6;
+}
+
+.btn.green {
+  background: #28a745;
+}
+.btn.green:hover {
+  background: #1e7e34;
+}
+
+.btn.yellow {
+  background: #ffc107;
+  color: #333;
+}
+.btn.yellow:hover {
+  background: #e0a800;
+}
+
+.btn.red {
+  background: #dc3545;
+}
+.btn.red:hover {
+  background: #b52a36;
+}
+
+/* Input sửa số lượng */
+.qty-input {
+  width: 70px;
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  font-size: 14px;
+}

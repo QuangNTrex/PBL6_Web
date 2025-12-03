@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./OrderStaffManagementPage.css";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:8000"; // đổi theo backend của bạn
 
@@ -12,7 +13,21 @@ const statusLabels = {
   cancelled: "❌ Đã hủy",
 };
 
+const isWithin10Minutes = (createdAt) => {
+  const createdTime = new Date(createdAt);
+  const now = new Date();
+  console.log(createdTime, now)
+
+  const diffMs = now - createdTime;        // chênh lệch mili giây
+  const diffMinutes = diffMs / 1000 / 60;  // đổi sang phút
+  console.log(diffMinutes)
+  return diffMinutes - 420 <= 10;
+};
+
+
+
 export default function OrderManagementPage() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -47,6 +62,7 @@ export default function OrderManagementPage() {
   const filteredOrders =
     filter === "all" ? orders : orders.filter((o) => o.status === filter);
 
+  console.log(orders)
   return (
     <div className="order-management-container">
       <h2>📦 Quản lý đơn hàng</h2>
@@ -75,6 +91,7 @@ export default function OrderManagementPage() {
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
               <th>Ngày đặt</th>
+              <th>Chi tiết</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -95,6 +112,9 @@ export default function OrderManagementPage() {
                     </span>
                   </td>
                   <td>{new Date(order.created_at).toLocaleString()}</td>
+                  <td>
+                    <button className="btn-order-detail" onClick={() => {navigate("/staff/order/" + order.id)}} disabled={!isWithin10Minutes(order.created_at)}>Chi tiết đơn hàng</button>
+                  </td>
                   <td>
                     <select
                       value={order.status}

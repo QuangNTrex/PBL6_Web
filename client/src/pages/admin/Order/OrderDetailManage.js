@@ -12,6 +12,9 @@ export default function OrderDetailManage() {
         completed: " Hoàn tất",
         cancelled: " Đã hủy",
     };
+    const [editingItem, setEditingItem] = useState(null);
+const [editQuantity, setEditQuantity] = useState(1);
+
 
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState("");
@@ -48,6 +51,31 @@ export default function OrderDetailManage() {
     setStatus(e.target.value);
   };
 
+  const handleSaveQuantity = async (itemId) => {
+  try {
+    await axios.put(`${API_URL}order-details/${itemId}`, {
+      quantity: editQuantity,
+    });
+
+    alert("Cập nhật số lượng thành công!");
+    setEditingItem(null);
+    fetchOrder(); // load lại đơn hàng
+  } catch (error) {
+    console.error("Lỗi cập nhật số lượng:", error);
+  }
+};
+const handleDeleteItem = async (itemId) => {
+  try {
+    await axios.delete(`${API_URL}orders/${orderId}/item/${itemId}`);
+
+    alert("Đã xóa sản phẩm.");
+    fetchOrder(); // load lại đơn hàng
+  } catch (error) {
+    console.error("Lỗi xóa sản phẩm:", error);
+  }
+};
+
+
   const handleUpdateStatus = async () => {
     await fetch(API_URL + `orders/${orderId}`, {
       method: "PUT",
@@ -59,6 +87,7 @@ export default function OrderDetailManage() {
   };
 
   if (!order) return <p>Loading...</p>;
+  console.log(order)
 
   return (
     <div className="order-detail-container">
@@ -99,19 +128,78 @@ export default function OrderDetailManage() {
               <th>Số lượng</th>
               <th>Đơn giá</th>
               <th>Thành tiền</th>
+              <th>Hành động</th>
             </tr>
           </thead>
+
           <tbody>
-            {order.order_details.map((item, idx) => (
-              <tr key={idx}>
+            {order.order_details.map((item) => (
+              <tr key={item.id}>
                 <td>{item.product?.code || item.product_id}</td>
                 <td>{item.product?.name || "N/A"}</td>
-                <td>{item.quantity}</td>
+
+                {/* Nếu đang sửa → input, nếu không → số lượng */}
+                <td>
+                  {editingItem === item.id ? (
+                    <input
+                      type="number"
+                      min="1"
+                      value={editQuantity}
+                      onChange={(e) => setEditQuantity(e.target.value)}
+                      className="qty-input"
+                    />
+                  ) : (
+                    item.quantity
+                  )}
+                </td>
+
                 <td>{item.unit_price}</td>
                 <td>{item.total_price}</td>
+
+                {/* HÀNH ĐỘNG */}
+                <td className="action-buttons">
+                  {editingItem === item.id ? (
+                    <>
+                      <button
+                        className="btn green"
+                        onClick={() => handleSaveQuantity(item.id)}
+                      >
+                        Lưu
+                      </button>
+
+                      <button
+                        className="btn yellow"
+                        onClick={() => setEditingItem(null)}
+                      >
+                        Hủy
+                      </button>
+                    </>
+                  ) : (<>
+                    <button
+                      className="btn blue"
+                      onClick={() => {
+                        setEditingItem(item.id);
+                        setEditQuantity(item.quantity);
+                      }}
+                      >
+                      Sửa
+                    </button>
+                    <button
+                      className="btn red"
+                      onClick={() => handleDeleteItem(item.id)}
+                    >
+                      Xóa
+                    </button>
+                      </>
+                  )}
+
+                  
+                </td>
               </tr>
             ))}
           </tbody>
+
+
         </table>
       </div>
     </div>

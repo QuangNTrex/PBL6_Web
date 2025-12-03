@@ -6,10 +6,22 @@ from app import models, schemas
 from app.database import get_db
 from ..core.auth_middleware import get_current_user
 
-router = APIRouter(
-    prefix="/orders",
-    tags=["Orders"]
-)
+from pydantic import BaseModel
+from typing import List, Optional
+
+def update_order_total(order_id: int, db: Session):
+    total = db.query(models.OrderDetail).filter(
+        models.OrderDetail.order_id == order_id
+    ).with_entities(
+        db.func.sum(models.OrderDetail.total_price)
+    ).scalar() or 0
+
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    order.total_amount = total
+    db.commit()
+    db.refresh(order)
+
+
 
 # 🟢 Tạo đơn hàng kèm OrderDetail
 @router.post("/", response_model=schemas.Order)
@@ -124,3 +136,72 @@ def cancel_order(
     db.refresh(order)
 
     return order
+
+# 🟢 Xóa 1 sản phẩm trong đơn hàng
+@router.delete("/{order_id}/item/{detail_id}", response_model=dict)
+def delete_order_item(order_id: int, detail_id: int, db: Session = Depends(get_db)):
+
+    # Kiểm tra order
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # Kiểm tra sản phẩm thuộc đơn hàng
+    detail = db.query(models.OrderDetail).filter(
+        models.OrderDetail.id == detail_id,
+        models.OrderDetail.order_id == order_id
+    ).first()
+
+    if not detail:
+        raise HTTPException(status_code=404, detail="Order detail not found")
+
+    # Xóa sản phẩm khỏi đơn
+    db.delete(detail)
+    db.commit()
+
+    # Cập nhật lại total_amount
+    new_total = db.query(models.OrderDetail.total_price).filter(
+        models.OrderDetail.order_id == order_id
+    ).all()
+    order.total_amount = sum([t[0] for t in new_total]) if new_total else 0
+
+    db.commit()
+    db.refresh(order)
+    update_order_total(order_id, db)
+
+    return {"message": "Item deleted successfully", "new_total": order.total_amount}
+
+# 🟢 Cập nhật 1 sản phẩm trong order (OrderDetail)
+@router.put("/{order_id}/items/{detail_id}", response_model=schemas.OrderDetail)
+def update_order_item(
+    order_id: int,
+    detail_id: int,
+    detail_update: schemas.OrderDetailUpdate,
+    db: Session = Depends(get_db),
+):
+    # Lấy item cần cập nhật
+    detail = (
+        db.query(models.OrderDetail)
+        .filter(
+            models.OrderDetail.id == detail_id,
+            models.OrderDetail.order_id == order_id
+        )
+        .first()
+    )
+
+    if not detail:
+        raise HTTPException(status_code=404, detail="Order item not found")
+
+    # Cập nhật quantity, note
+    if detail_update.quantity is not None:
+        detail.quantity = detail_update.quantity
+        detail.total_price = detail.unit_price * detail.quantity  # cập nhật lại giá
+
+    if detail_update.note is not None:
+        detail.note = detail_update.note
+
+    db.commit()
+    db.refresh(detail)
+    update_order_total(order_id, db)
+
+    return detail

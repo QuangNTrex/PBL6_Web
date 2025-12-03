@@ -1,36 +1,3 @@
-# from sqlalchemy import create_engine, MetaData, Table, select
-# import json
-# import datetime
-
-# # Kết nối SQL Server
-# DATABASE_URL = "mssql+pyodbc://@DESKTOP-1PDGM0O/PBL6_WEB?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
-# engine = create_engine(DATABASE_URL)
-
-# metadata = MetaData()
-# metadata.reflect(engine)
-
-# # Lấy bảng category
-# category_table = metadata.tables.get("Categories")
-
-# if category_table is None:
-#     raise ValueError("Không tìm thấy bảng 'category' trong database")
-
-# with engine.connect() as conn:
-#     result = conn.execute(select(category_table))
-#     rows = []
-#     for row in result:
-#         row_dict = dict(row._mapping)
-#         # Convert datetime -> string
-#         for key, value in row_dict.items():
-#             if isinstance(value, (datetime.date, datetime.datetime)):
-#                 row_dict[key] = value.isoformat()
-#         rows.append(row_dict)
-
-# # Xuất ra JSON
-# with open("category.json", "w", encoding="utf-8") as f:
-#     json.dump(rows, f, ensure_ascii=False, indent=4)
-
-# print("✅ Đã export bảng category ra file category.json")
 
 
 import json
@@ -47,18 +14,6 @@ DATABASE_URL = "mssql+pyodbc://@DESKTOP-1PDGM0O/PBL6_WEB?driver=ODBC+Driver+17+f
 
 # Tạo engine kết nối
 engine = create_engine(DATABASE_URL)
-
-
-
-# 1. Kết nối đến SQL
-# SQLite
-# engine = create_engine("sqlite:///mydb.db", echo=True)
-
-# MySQL
-# engine = create_engine("mysql+pymysql://username:password@localhost:3306/mydb?charset=utf8mb4")
-
-# PostgreSQL
-# engine = create_engine("postgresql://username:password@localhost:5432/mydb")
 
 metadata = MetaData()
 metadata.reflect(bind=engine)

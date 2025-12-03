@@ -43,7 +43,7 @@ function ScanProductPage() {
       });
       setSegmentLabels(merged);
       console.log("-------------")
-      console.log(merged)
+      console.log(data)
       setMerge(merged)
     };
 

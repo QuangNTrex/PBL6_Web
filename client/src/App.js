@@ -128,6 +128,7 @@ function App() {
           <Route path="orders" element={<OrderStaffManagementPage />} />
           <Route path="products" element={<ProductStaffManagePage />} />
           <Route path="" element={<Navigate to="/staff/orders" replace></Navigate>}/>
+          <Route path="order/:id" element={<OrderDetailManage />} />
         </Route>
 
         {/* Fallback */}
