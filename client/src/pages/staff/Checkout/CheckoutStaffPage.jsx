@@ -156,7 +156,7 @@ export default function CheckoutStaffPage() {
 
       {/* Nút xác nhận */}
       <button className="checkout-btn" onClick={handleSubmit}>
-        Xác nhận thanh toán
+        Xác nhận đặt hàng
       </button>
     </div>
   );

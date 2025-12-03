@@ -14,6 +14,9 @@ def get_products(db: Session, skip: int = 0, limit: int = 100):
 def get_product(db: Session, product_id: int):
     return db.query(models.Product).filter(models.Product.id == product_id).first()
 
+def get_product_by_code(db: Session, code: str):
+    return db.query(models.Product).filter(models.Product.code == code).first()
+
 def update_product(db: Session, product_id: int, product: schemas.ProductUpdate):
     db_product = get_product(db, product_id)
     if not db_product:

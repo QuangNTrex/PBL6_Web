@@ -91,7 +91,7 @@ def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detect
     last_detect_time = 0
 
     # Cấu hình: resize để tăng tốc
-    TARGET_SIZE = (640, 480)
+    TARGET_SIZE = (640, 640)
     MIN_INTERVAL = 1 / 30  # tối đa 30fps inference
 
     while not stop_event.is_set():
