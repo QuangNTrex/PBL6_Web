@@ -46,6 +46,11 @@ def update_order_total(order_id: int, db: Session):
 
 
 
+router = APIRouter(
+    prefix="/orders",
+    tags=["Orders"]
+)
+
 # 🟢 Tạo đơn hàng kèm OrderDetail
 @router.post("/", response_model=schemas.Order)
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):

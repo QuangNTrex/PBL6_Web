@@ -6,11 +6,11 @@ import { useNavigate } from "react-router-dom";
 const API_URL = "http://localhost:8000"; // đổi theo backend của bạn
 
 const statusLabels = {
-  pending: "⏳ Chờ xác nhận",
-  confirmed: "✅ Đã xác nhận",
-  shipping: "🚚 Đang giao",
-  completed: "🎉 Hoàn tất",
-  cancelled: "❌ Đã hủy",
+  pending: "Chờ xác nhận",
+  confirmed: "Đã xác nhận",
+  shipping: "Đang giao",
+  completed: "Hoàn tất",
+  cancelled: "Đã hủy",
 };
 
 const isWithin10Minutes = (createdAt) => {
@@ -60,7 +60,11 @@ export default function OrderManagementPage() {
 
   // Lọc đơn theo trạng thái
   const filteredOrders =
-    filter === "all" ? orders : orders.filter((o) => o.status === filter);
+    (filter === "all" ? orders : orders.filter((o) => o.status === filter))
+  console.log(filteredOrders)
+    filteredOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  
 
   console.log(orders)
   return (
