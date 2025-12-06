@@ -16,11 +16,9 @@ const statusLabels = {
 const isWithin10Minutes = (createdAt) => {
   const createdTime = new Date(createdAt);
   const now = new Date();
-  console.log(createdTime, now)
 
   const diffMs = now - createdTime;        // chênh lệch mili giây
   const diffMinutes = diffMs / 1000 / 60;  // đổi sang phút
-  console.log(diffMinutes)
   return diffMinutes - 420 <= 10;
 };
 
@@ -62,7 +60,8 @@ export default function OrderManagementPage() {
   const filteredOrders =
     (filter === "all" ? orders : orders.filter((o) => o.status === filter))
   console.log(filteredOrders)
-    filteredOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    filteredOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    console.log(filteredOrders)
 
   
 

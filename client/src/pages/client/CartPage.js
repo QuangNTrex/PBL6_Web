@@ -44,6 +44,8 @@ export default function CartPage() {
   };
 
   // Tổng tiền chỉ tính sản phẩm đã chọn
+  console.log(items)
+  
   const totalAmount = items
     .filter((item) => selectedItems.includes(item.id))
     .reduce((sum, item) => sum + item.price * item.quantity, 0);

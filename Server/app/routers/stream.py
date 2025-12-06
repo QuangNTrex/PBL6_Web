@@ -226,7 +226,7 @@ def process_segments(
     # ===================================================================
     # 3.5️⃣ Các khoảng detect nhỏ hơn threshold (5) => chuyển sang skip
     # ===================================================================
-    detect_threshold = 5
+    detect_threshold = 8
     for seg in merged_segments:
         if seg["type"] == "detect" and (seg["end"] - seg["start"] + 1) < detect_threshold:
             seg["type"] = "skip"

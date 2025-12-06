@@ -61,6 +61,9 @@ const Header = () => {
                 <Link to="/profile">Tài khoản của tôi</Link>
               </li>
               <li>
+                <Link to="/staff">Trang nhân viên</Link>
+              </li>
+              <li>
                 <Link to="/admin/settings">Cài đặt</Link>
               </li>
               <li>
