@@ -29,6 +29,7 @@ function Register() {
             },
             body: JSON.stringify(abc)
         }).then(res => res.json()).then(data => {
+          if(data.detail) throw new Error(data.detail)
           console.log(data);
             console.log(data)
             navigate("/login");

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, Date, UnicodeText
+from sqlalchemy import Boolean, Column, Integer, String, Float, ForeignKey, DateTime, Enum, Unicode, Date, UnicodeText
 from sqlalchemy.orm import relationship
 from .database import Base
 from datetime import datetime, date
@@ -97,6 +97,12 @@ class User(Base):
     # Quan hệ: 1 user có nhiều products
     products = relationship("Product", back_populates="user")
 
+    email_verification_codes = relationship(
+        "EmailVerificationCode",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
 
 # ====== Category ======
 class Category(Base):
@@ -188,3 +194,29 @@ class OrderDetail(Base):
 
     # Quan hệ: mỗi OrderDetail thuộc 1 Product
     product = relationship("Product", back_populates="order_details")
+
+class EmailVerificationCode(Base):
+    __tablename__ = "email_verification_codes"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    # Liên kết tài khoản
+    user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
+
+    # Mã OTP 6 số
+    code = Column(String(6), nullable=False)
+
+    # Email xác thực
+    email = Column(String(255), nullable=False)
+
+    # Thời điểm hết hạn
+    expires_at = Column(DateTime, nullable=False)
+
+    # Đánh dấu đã dùng hay chưa
+    is_used = Column(Boolean, default=False)
+
+    # Thời điểm tạo
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Quan hệ: mỗi mã thuộc về 1 user
+    user = relationship("User", back_populates="email_verification_codes")

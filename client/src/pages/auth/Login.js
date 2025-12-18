@@ -25,11 +25,27 @@ function Login() {
                 dispatch(setUser(data.user));
                 localStorage.setItem("access_token", data.access_token);
                 dispatch(setUser(data.user));
-                navigate("/");
+                navigate("/send-code");
+
+                fetch(API_URL + "auth/send-code?email=" + data.user.email, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({email: "dev.quangnt@gmail.com"})
+                    }).then(res => res.json()).then(data => {
+                        console.log(data)
+
+                    }).catch(err => {
+                        console.error("Đăng nhập thất bại:", err);
+                    })
+                
 
             }).catch(err => {
                 console.error("Đăng nhập thất bại:", err);
             })
+
+    
   };
 
   return <AuthForm type="login" onSubmit={handleLogin} />;

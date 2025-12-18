@@ -31,7 +31,7 @@ export default function CheckoutStaffPage() {
   // 🟢 Submit đơn hàng
   const handleSubmit = async () => {
     const orderData = {
-      user_id: user.id, // TODO: thay bằng user_id từ Redux/Auth
+      user_id: user.id, 
       shipping_address: address,
       note,
       payment_method: paymentMethod,

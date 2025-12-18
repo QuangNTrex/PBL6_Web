@@ -7,6 +7,7 @@ import { API_URL } from "./utils/lib";
 import { clearUser, setUser } from "./redux/userSlice";
 import OrderDetailManage from "./pages/admin/Order/OrderDetailManage";
 import CheckoutStaffPage from "./pages/staff/Checkout/CheckoutStaffPage";
+import VerifyPage from "./pages/client/VerifyPage";
 
 // Layouts
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
@@ -82,6 +83,7 @@ function App() {
         {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+         <Route path="/send-code" element={<PrivateRoute user={user}><VerifyPage /></PrivateRoute>} />
 
         {/* Client */}
         <Route element={<ClientLayout />}>
@@ -95,6 +97,8 @@ function App() {
           <Route path="/checkout" element={<PrivateRoute user={user}><CheckoutPage /></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute user={user}><OrderPage /></PrivateRoute>} />
           <Route path="/orders/:id" element={<PrivateRoute user={user}><OrderDetailPage /></PrivateRoute>} />
+         
+
         </Route>
 
         {/* Admin */}

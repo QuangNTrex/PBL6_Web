@@ -116,7 +116,7 @@ export default function OrderManagementPage() {
                   </td>
                   <td>{new Date(order.created_at).toLocaleString()}</td>
                   <td>
-                    <button className="btn-order-detail" onClick={() => {navigate("/staff/order/" + order.id)}} disabled={!isWithin10Minutes(order.created_at)}>Chi tiết đơn hàng</button>
+                    <button className="btn-order-detail" onClick={() => {navigate("/staff/order/" + order.id)}} disabled={!isWithin10Minutes(order.created_at)} title={!isWithin10Minutes(order.created_at) && "Đơn hàng này đã qua 10 phút, vai trò của bạn không thể xem"}>Chi tiết đơn hàng</button>
                   </td>
                   <td>
                     <select
