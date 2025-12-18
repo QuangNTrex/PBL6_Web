@@ -6,10 +6,17 @@ import { useNavigate } from "react-router-dom";
 const API_URL = "http://localhost:8000"; // đổi theo backend của bạn
 
 const statusLabels = {
-  pending: "Chờ xác nhận",
   confirmed: "Đã xác nhận",
-  shipping: "Đang giao",
   completed: "Hoàn tất",
+  cancelled: "Đã hủy",
+};
+
+const statusLabelsCompleted = {
+  completed: "Hoàn tất",
+  cancelled: "Đã hủy",
+};
+
+const statusLabelsCancelled = {
   cancelled: "Đã hủy",
 };
 
@@ -125,11 +132,21 @@ export default function OrderManagementPage() {
                         updateOrderStatus(order.id, e.target.value)
                       }
                     >
-                      {Object.keys(statusLabels).map((status) => (
+                      {order.status == "completed" ? Object.keys(statusLabelsCompleted).map((status) => (
                         <option key={status} value={status}>
                           {statusLabels[status]}
                         </option>
-                      ))}
+                      )) : order.status == "cancelled" ?
+                      Object.keys(statusLabelsCancelled).map((status) => (
+                        <option key={status} value={status}>
+                          {statusLabels[status]}
+                        </option>
+                      )) : 
+                      Object.keys(statusLabels).map((status) => (
+                        <option key={status} value={status}>
+                          {statusLabels[status]}
+                        </option>
+                      )) }
                     </select>
                   </td>
                 </tr>

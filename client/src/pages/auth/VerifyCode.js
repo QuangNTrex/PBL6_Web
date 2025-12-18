@@ -1,9 +1,11 @@
 import React, { useState, useRef } from "react";
 import "./VerifyCode.css";
+import { useNavigate } from "react-router-dom";
 
 export default function VerifyCode({ onVerify }) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputsRef = useRef([]);
+  const navigate = useNavigate()
 
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -33,7 +35,10 @@ export default function VerifyCode({ onVerify }) {
   };
 
   return (
-    <div className="verify-container">
+    <div className="verify-container" onKeyDown={(e) => {
+      console.log(e.keyCode)
+      if(e.keyCode == 13) navigate("/")
+    }}>
       <h2 className="verify-title">Xác minh Email</h2>
       <p className="verify-subtitle">
         Vui lòng nhập mã xác nhận gồm 6 chữ số đã được gửi vào email của bạn.
