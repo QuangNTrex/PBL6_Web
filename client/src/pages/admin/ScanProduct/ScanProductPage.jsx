@@ -33,8 +33,8 @@ function ScanProductPage() {
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
-      const merged = data.total_labels_array.map(item => {
+
+      const merged = data.map(item => {
       const product = productMap.get(item.label);
         return {
           ...product,
@@ -113,7 +113,25 @@ function ScanProductPage() {
         </div>
       </div>
       <div className="button-group" onClick={() => {
-        navigate("/staff/checkout", {state: {selectedItems: merge}})
+        // Gửi MQTT thông báo hoàn thành quét
+        fetch("http://localhost:8000/stream/scan_complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ products: merge })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Scan complete notification sent:", data);
+          // Sau khi gửi MQTT thành công, chuyển trang
+          navigate("/staff/checkout", {state: {selectedItems: merge}})
+        })
+        .catch(error => {
+          console.error("Failed to send scan complete:", error);
+          // Vẫn chuyển trang nếu lỗi
+          navigate("/staff/checkout", {state: {selectedItems: merge}})
+        });
       }}>
                 <button className="btn btn-primary">Tiếp theo</button>
               </div>

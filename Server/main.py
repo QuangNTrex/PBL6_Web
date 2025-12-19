@@ -16,10 +16,8 @@ from app.routers import users, categories, order_details, products, orders, auth
 from collections import Counter
 import asyncio
 import json
+import paho.mqtt.client as mqtt
 
-# ============================================================
-# 🧩 1. MJPEG STREAM GENERATOR
-# ============================================================
 def generate_mjpeg_stream(shared_frame_buffer, frame_lock):
     mjpeg_header = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'
     while True:
@@ -41,121 +39,90 @@ async def event_generator(detected_labels_history, frame_lock_labels):
         if data != last_data or True:  # chỉ gửi khi có thay đổi
             last_data = data
             yield f"data: {json.dumps(data)}\n\n"
-
-
 # ============================================================
 # 🧩 2. IMAGEZMQ RECEIVER PROCESS
 # ============================================================
-def image_loop(stop_event, raw_frame_buffer, frame_lock):
-    """Nhận ảnh JPEG từ client và lưu vào buffer chia sẻ."""
+def image_loop(stop_event, detected_frame_buffer, detected_labels_history, frame_lock, labels_lock):
+    """Nhận ảnh JPEG và dữ liệu detect từ Raspberry Pi qua ImageZMQ."""
     import imagezmq
+    import json
+    import time
+    import threading
+    import queue
     import cv2
+    import numpy as np
+
+    # Queue trung gian để tách biệt luồng nhận (IO) và luồng xử lý (CPU/Shared Memory)
+    # Maxsize nhỏ để drop frame cũ nếu xử lý không kịp, đảm bảo realtime
+    process_queue = queue.Queue(maxsize=2)
+
+    def process_worker():
+        while not stop_event.is_set():
+            try:
+                # Lấy dữ liệu từ queue với timeout để kiểm tra stop_event
+                json_msg, frame = process_queue.get(timeout=0.1)
+
+                # Resize ảnh về 640x640
+                if frame is not None:
+                    frame = cv2.resize(frame, (640, 640))
+                    _, encoded_img = cv2.imencode('.jpg', frame)
+                    jpg_buffer = encoded_img.tobytes()
+                else:
+                    continue
+
+                # 1. Cập nhật ảnh vào buffer
+                with frame_lock:
+                    detected_frame_buffer.value = jpg_buffer
+                
+                # 2. Cập nhật thông tin nhãn (labels)
+                try:
+                    msg = json.loads(json_msg)
+                    counter = msg.get("counter", {})
+                    
+                    # Chuyển đổi format dict {label: qty} -> list [{label, quantity, time}]
+                    current_labels = []
+                    timestamp = msg.get("time", time.time())
+                    for label, qty in counter.items():
+                        current_labels.append({
+                            "label": label,
+                            "quantity": qty,
+                            "time": timestamp
+                        })
+                    
+                    with labels_lock:
+                        detected_labels_history[:] = current_labels
+                        
+                except json.JSONDecodeError:
+                    pass # Có thể là tin nhắn khởi động hoặc không phải JSON
+                except Exception as e:
+                    print(f"⚠️ Lỗi xử lý dữ liệu JSON từ Pi: {e}")
+            except queue.Empty:
+                continue
+            except Exception as e:
+                print(f"⚠️ Lỗi trong process_worker: {e}")
+
+    # Khởi chạy thread xử lý nền
+    worker_thread = threading.Thread(target=process_worker, daemon=True)
+    worker_thread.start()
 
     image_hub = imagezmq.ImageHub(open_port='tcp://*:5555')
     print("📡 Server đang chờ kết nối từ client ImageZMQ tại cổng 5555...")
 
     while not stop_event.is_set():
         try:
-            rpi_name, jpg_buffer = image_hub.recv_jpg()
-            jpg_buffer = bytes(jpg_buffer)  # 🔧 chuyển thành bytes thuần
-            with frame_lock:
-                raw_frame_buffer.value = jpg_buffer
+            # rpi_name chứa JSON string: {"camera_name": "...", "counter": {...}}
+            json_msg, frame = image_hub.recv_image()
             image_hub.send_reply(b'OK')
+
+            # Đẩy vào queue để xử lý bất đồng bộ, tránh block client
+            if not process_queue.full():
+                process_queue.put((json_msg, frame))
+
         except Exception as e:
             print(f"⚠️ Lỗi trong ImageZMQ worker: {e}")
             break
 
     print("✨ ImageZMQ worker kết thúc.")
-
-
-# ============================================================
-# 🧩 3. YOLO DETECTION PROCESS
-# ============================================================
-def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detected_labels_history,
-                     frame_lock_raw, frame_lock_detect, detected_labels_lock):
-    """Process phát hiện sản phẩm từ ảnh nhận được (YOLOv8)."""
-    import cv2
-    import numpy as np
-    import time
-    from ultralytics import YOLO
-    from collections import Counter
-    import torch
-
-    print("🧠 Đang tải mô hình YOLO...")
-    model = YOLO("model/no_mosaic_sgd_0284.pt")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model.to(device)
-    print(f"✅ Mô hình YOLO đã sẵn sàng trên {device.upper()}.")
-
-    prev_time = time.time()
-    last_detect_time = 0
-
-    # Cấu hình: resize để tăng tốc
-    TARGET_SIZE = (640, 640)
-    MIN_INTERVAL = 1 / 30  # tối đa 30fps inference
-
-    while not stop_event.is_set():
-        loop_start = time.time()
-
-        # --- Đọc frame an toàn ---
-        with frame_lock_raw:
-            jpg_buffer = raw_frame_buffer.value
-
-        if not jpg_buffer:
-            time.sleep(0.01)
-            continue
-
-        # --- Giải mã JPEG thành ảnh ---
-        nparr = np.frombuffer(jpg_buffer, np.uint8)
-        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if frame is None:
-            time.sleep(0.01)
-            continue
-
-        # --- Resize để tối ưu tốc độ ---
-        frame_resized = cv2.resize(frame, TARGET_SIZE)
-
-        # --- Detect sản phẩm ---
-        results = model.predict(frame_resized, conf=0.4,iou=0.45, verbose=False, stream=False)
-        result = results[0]
-
-        annotated_frame = result.plot()
-
-        # --- Lấy nhãn & đếm số lượng ---
-        boxes = result.boxes
-        if boxes is not None and len(boxes) > 0:
-            cls_ids = boxes.cls.cpu().numpy().astype(int)
-            labels = [model.names[i] for i in cls_ids]
-        else:
-            labels = []
-
-        with detected_labels_lock:
-            label_counts = Counter(labels)
-            detected_labels_history[:] = [
-                {"label": lbl, "quantity": cnt, "time": time.time()}
-                for lbl, cnt in label_counts.items()
-            ]
-
-        # --- Tính FPS ---
-        now = time.time()
-        fps = 1.0 / (now - prev_time) if (now - prev_time) > 0 else 0
-        prev_time = now
-
-        cv2.putText(annotated_frame, f"FPS: {int(fps)}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-        # --- Mã hóa lại để stream ---
-        success, encoded = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
-        if success:
-            with frame_lock_detect:
-                detected_frame_buffer.value = encoded.tobytes()
-
-        # --- Giữ nhịp ổn định ---
-        elapsed = time.time() - loop_start
-        if elapsed < MIN_INTERVAL:
-            time.sleep(MIN_INTERVAL - elapsed)
-
-    print("🧠 YOLO detection process kết thúc.")
 
 
 # ============================================================
@@ -166,13 +133,27 @@ try:
 except RuntimeError:
     pass
 
+# ============================================================
+# 🧩 5. MQTT CLIENT SETUP
+# ============================================================
+MQTT_BROKER = "broker.hivemq.com"
+MQTT_PORT = 1883
+
+mqtt_client = mqtt.Client()
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("[MQTT] Connected successfully to broker.")
+    else:
+        print(f"[MQTT] Failed to connect, return code {rc}")
+
+mqtt_client.on_connect = on_connect
+
 if __name__ == "__main__":
     # 4.1. Tạo shared memory và Lock
     manager = Manager()
-    raw_frame_buffer = manager.Value(c_char_p, b"")         # ảnh gốc từ client
     detected_frame_buffer = manager.Value(c_char_p, b"")    # ảnh đã detect
     detected_labels_history = manager.list()
-    frame_lock_raw = Lock()
     frame_lock_detect = Lock()
     detected_labels_lock = Lock()
     stop_event = multiprocessing.Event()
@@ -180,15 +161,17 @@ if __name__ == "__main__":
     # 4.2. Khởi tạo process con
     receiver_process = multiprocessing.Process(
         target=image_loop,
-        args=(stop_event, raw_frame_buffer, frame_lock_raw)
-    )
-    detector_process = multiprocessing.Process(
-        target=yolo_detect_loop,
-        args=(stop_event, raw_frame_buffer, detected_frame_buffer, detected_labels_history, frame_lock_raw, frame_lock_detect, detected_labels_lock)
+        args=(stop_event, detected_frame_buffer, detected_labels_history, frame_lock_detect, detected_labels_lock)
     )
 
     receiver_process.start()
-    detector_process.start()
+
+    # 4.2.5 Start MQTT
+    try:
+        mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+        mqtt_client.loop_start()
+    except Exception as e:
+        print(f"[ERROR] Could not start MQTT client: {e}")
 
     # 4.3. FastAPI App
     app = FastAPI()
@@ -196,6 +179,7 @@ if __name__ == "__main__":
     app.state.frame_lock_detect = frame_lock_detect
     app.state.detected_labels_history = detected_labels_history
     app.state.detected_labels_lock = detected_labels_lock
+    app.state.mqtt_client = mqtt_client
 
     # CORS
     origins = ["http://localhost:3000"]
@@ -251,10 +235,9 @@ if __name__ == "__main__":
     finally:
         print("⚙️ Đang dừng các tiến trình con...")
         stop_event.set()
-        receiver_process.join(timeout=5)
-        detector_process.join(timeout=5)
+        receiver_process.join(timeout=3)
 
-        for proc in [receiver_process, detector_process]:
+        for proc in [receiver_process]:
             if proc.is_alive():
                 print(f"⚠️ {proc.name} chưa dừng, buộc terminate.")
                 proc.terminate()

@@ -1,33 +1,11 @@
 # routers/order.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import List
 from app import models, schemas
 from app.database import get_db
 from ..core.auth_middleware import get_current_user
-import paho.mqtt.client as mqtt
 import json
-
-# ========== MQTT Setup ==========
-MQTT_BROKER = "broker.hivemq.com"
-MQTT_PORT = 1883
-MQTT_TOPIC = "pbl6/products"
-
-mqtt_client = mqtt.Client()
-
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("[MQTT Orders] Connected successfully to broker.")
-    else:
-        print(f"[MQTT Orders] Failed to connect, return code {rc}")
-
-try:
-    mqtt_client.on_connect = on_connect
-    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    mqtt_client.loop_start()
-except Exception as e:
-    print(f"[ERROR] Could not start MQTT client in orders.py: {e}")
-# ==============================
 
 from pydantic import BaseModel
 from typing import List, Optional
@@ -51,9 +29,11 @@ router = APIRouter(
     tags=["Orders"]
 )
 
+MQTT_TOPIC = "pbl6/products"
+
 # 🟢 Tạo đơn hàng kèm OrderDetail
 @router.post("/", response_model=schemas.Order)
-def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
+def create_order(order: schemas.OrderCreate, request: Request, db: Session = Depends(get_db)):
     db_order = models.Order(
         user_id=order.user_id,
         status=order.status,
@@ -88,7 +68,7 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
             "price": order.total_amount,
             "quantity": 0
         }
-        mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
+        request.app.state.mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
         print(f"[MQTT] Published Total Price to {MQTT_TOPIC}: {payload}")
     except Exception as e:
         print(f"[ERROR] Failed to publish total price via MQTT: {e}")
