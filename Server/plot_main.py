@@ -62,13 +62,36 @@ def image_loop(stop_event, detected_frame_buffer, detected_labels_history, frame
                 # Lấy dữ liệu từ queue với timeout để kiểm tra stop_event
                 json_msg, frame = process_queue.get(timeout=0.1)
 
-                # Resize ảnh về 640x640
-                if frame is not None:
-                    frame = cv2.resize(frame, (640, 640))
-                    _, encoded_img = cv2.imencode('.jpg', frame)
-                    jpg_buffer = encoded_img.tobytes()
-                else:
+                if frame is None:
                     continue
+
+                # Parse JSON message to get detections and counter
+                detections = []
+                counter = {}
+                timestamp = time.time()
+                try:
+                    msg = json.loads(json_msg)
+                    detections = msg.get("detections", [])
+                    counter = msg.get("counter", {})
+                    timestamp = msg.get("time", time.time())
+                except json.JSONDecodeError:
+                    pass
+
+                # Draw detections on frame
+                for det in detections:
+                    box = det.get("box")
+                    label = det.get("label")
+                    conf = det.get("conf")
+                    if box:
+                        x1, y1, x2, y2 = map(int, box)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                        label_text = f"{label} {conf:.2f}" if conf else label
+                        cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+
+                # Resize ảnh về 640x640
+                frame = cv2.resize(frame, (640, 640))
+                _, encoded_img = cv2.imencode('.jpg', frame)
+                jpg_buffer = encoded_img.tobytes()
 
                 # 1. Cập nhật ảnh vào buffer
                 with frame_lock:
@@ -76,12 +99,8 @@ def image_loop(stop_event, detected_frame_buffer, detected_labels_history, frame
                 
                 # 2. Cập nhật thông tin nhãn (labels)
                 try:
-                    msg = json.loads(json_msg)
-                    counter = msg.get("counter", {})
-                    
                     # Chuyển đổi format dict {label: qty} -> list [{label, quantity, time}]
                     current_labels = []
-                    timestamp = msg.get("time", time.time())
                     for label, qty in counter.items():
                         current_labels.append({
                             "label": label,
@@ -92,8 +111,6 @@ def image_loop(stop_event, detected_frame_buffer, detected_labels_history, frame
                     with labels_lock:
                         detected_labels_history[:] = current_labels
                         
-                except json.JSONDecodeError:
-                    pass # Có thể là tin nhắn khởi động hoặc không phải JSON
                 except Exception as e:
                     print(f"⚠️ Lỗi xử lý dữ liệu JSON từ Pi: {e}")
             except queue.Empty:

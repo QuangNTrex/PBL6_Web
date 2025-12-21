@@ -191,7 +191,7 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
                         if now - last_seen_time > EMPTY_TIMEOUT:
                             if current_scanning:
                                 # Chỉ chấp nhận nếu có đủ số lượng frame (tránh nhiễu)
-                                if len(batch_frame_counters) >= 5:
+                                if len(batch_frame_counters) >= 15:
                                     # print("[SCAN] END ->", current_scanning)
                                     session_total.update(current_scanning)
 
@@ -206,7 +206,7 @@ async def label_feed(request: Request, db: Session = Depends(get_db)):
                                                     "quantity": quantity
                                                 }
                                                 mqtt_client.publish("pbl6/products", json.dumps(payload))
-                                                print(f"[MQTT] Published Product to pbl6/products: {payload}")
+                                                # print(f"[MQTT] Published Product to pbl6/products: {payload}")
                                         except Exception as e:
                                             print(f"[ERROR] MQTT Publish failed: {e}")
                                 # else: print(f"[SCAN] IGNORED (Too few frames: {len(batch_frame_counters)})")
