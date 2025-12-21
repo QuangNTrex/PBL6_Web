@@ -4,7 +4,6 @@ from ctypes import c_char_p
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
-import paho.mqtt.client as mqtt
 from sqlalchemy.orm import Session
 from app.crud import products as crud_products
 from app import models
@@ -16,28 +15,13 @@ from collections import Counter
 import asyncio
 import json
 
+class ScanState:
+    IDLE = 0
+    SCANNING = 1
+
+EMPTY_TIMEOUT = 2  # Thời gian chờ để xác nhận kết thúc đợt quét
+
 # ========== MQTT Setup ==========
-MQTT_BROKER = "broker.hivemq.com"
-MQTT_PORT = 1883
-MQTT_TOPIC = "pbl6/products"
-
-mqtt_client = mqtt.Client()
-
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("[MQTT] Connected successfully to broker.")
-    else:
-        print(f"[MQTT] Failed to connect, return code {rc}")
-
-try:
-    mqtt_client.on_connect = on_connect
-    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    mqtt_client.loop_start()
-except Exception as e:
-    print(f"[ERROR] Could not start MQTT client: {e}")
-# ==============================
-
-
 router = APIRouter(prefix="/stream", tags=["Stream"])
 def detect_segments(frames_labels, min_detect=60, min_silence=15):
     """
@@ -226,7 +210,7 @@ def process_segments(
     # ===================================================================
     # 3.5️⃣ Các khoảng detect nhỏ hơn threshold (5) => chuyển sang skip
     # ===================================================================
-    detect_threshold = 8
+    detect_threshold = 13
     for seg in merged_segments:
         if seg["type"] == "detect" and (seg["end"] - seg["start"] + 1) < detect_threshold:
             seg["type"] = "skip"
@@ -314,7 +298,7 @@ def process_segments(
         # Xét cửa sổ gần cuối
         if counts:
             window = counts[-trend_window:] if len(counts) > trend_window else counts
-            print(window)
+            # print(window)
             if len(window) >= trend_min_len:
                 diffs = [window[i] - window[i - 1] for i in range(1, len(window))]
                 decreases = sum(1 for d in diffs if d < 0)
@@ -359,90 +343,103 @@ async def label_feed(request: Request):
 async def label_feed(request: Request, db: Session = Depends(get_db)):
     buffer = request.app.state.detected_labels_history
     lock = request.app.state.detected_labels_lock
+    mqtt_client = request.app.state.mqtt_client
 
-    async def merge_label_generate(buffer, lock, db_session):
-        detected_label = []
-        current_time = time.time()
-        was_detecting = False  # Track previous state
-        sent_rep_indices = set()  # Đảm bảo mỗi rep_index chỉ gửi 1 lần
+    async def merge_label_generate(buffer, lock, db):
+            # --- FSM State Initialization ---
+            state = ScanState.IDLE
+            last_seen_time = 0
+            batch_frame_counters = []
+            session_total = Counter()   # Tổng các đợt đã quét xong
+            current_scanning = {}       # Đợt đang quét hiện tại
 
-        while True:
-            await asyncio.sleep(0.04)
-            with lock:
-                # Assuming buffer holds the latest frame's labels
-                detected_label.append(list(buffer))
+            try:
+                while True:
+                    await asyncio.sleep(0.04)
+                    
+                    # 1. Lấy dữ liệu từ shared memory và chuyển về dạng Counter
+                    frame_counter = Counter()
+                    now = time.time()
+                    
+                    with lock:
+                        data_list = list(buffer)
+                    
+                    if data_list:
+                        # Lấy timestamp từ frame đầu tiên nếu có
+                        now = data_list[0].get("time", now)
+                        for item in data_list:
+                            lbl = item.get("label")
+                            qty = item.get("quantity", 0)
+                            if lbl:
+                                frame_counter[lbl] += qty
 
-            if time.time() - current_time >= 1:
-                current_time = time.time()
-                merged_segments, representative_frames, total_labels_array, decreasing_info = process_segments(detected_label)
+                    # 2. FSM Logic (Thuật toán quét)
+                    if state == ScanState.IDLE:
+                        if frame_counter:
+                            state = ScanState.SCANNING
+                            batch_frame_counters = [frame_counter]
+                            last_seen_time = now
+                            # print("\n[SCAN] START")
 
-                # --- State-Transition + Decreasing Trend MQTT Logic ---
-                try:
-                    is_detecting = bool(merged_segments and merged_segments[-1]['type'] == 'detect')
+                    elif state == ScanState.SCANNING:
+                        if frame_counter:
+                            batch_frame_counters.append(frame_counter)
+                            last_seen_time = now
+                        
+                        # Cập nhật mục "đang quét" (current_scanning) bằng cách vote
+                        if batch_frame_counters:
+                            votes = Counter(tuple(sorted(c.items())) for c in batch_frame_counters)
+                            if votes:
+                                best, _ = votes.most_common(1)[0]
+                                current_scanning = dict(best)
 
-                    # 1) Xu hướng giảm: gửi sớm, không cần đợi silent
-                    if decreasing_info.get("has_decreasing_trend"):
-                        target_idx = decreasing_info.get("target_rep_index")
-                        if target_idx is not None and target_idx not in sent_rep_indices:
-                            # Tìm rep tương ứng để lấy labels
-                            target_frame = next(
-                                (rep for rep in representative_frames if rep.get("rep_index") == target_idx),
-                                None
-                            )
-                            if target_frame:
-                                labels_in_frame = target_frame.get("representative_labels", [])
-                                for item in labels_in_frame:
-                                    product_code = item.get("label")
-                                    quantity = item.get("quantity")
-                                    if product_code:
-                                        product_db = crud_products.get_product_by_code(db=db_session, code=product_code)
-                                        if product_db:
-                                            payload = {
-                                                "label": product_db.code,
-                                                "price": product_db.price,
-                                                "quantity": quantity
-                                            }
-                                            mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
-                                            print(f"[MQTT] Published on decreasing trend: {payload}")
-                                sent_rep_indices.add(target_idx)
+                        # Kiểm tra điều kiện kết thúc đợt quét (timeout)
+                        if not frame_counter:
+                            if now - last_seen_time > EMPTY_TIMEOUT:
+                                if current_scanning:
+                                    # Chỉ chấp nhận nếu có đủ số lượng frame (tránh nhiễu)
+                                    if len(batch_frame_counters) >= 15:
+                                        # print("[SCAN] END ->", current_scanning)
+                                        session_total.update(current_scanning)
 
-                    # 2) Check for transition from detect -> silence: gửi nếu chưa gửi rep này
-                    if was_detecting and not is_detecting:
-                        print("[MQTT] State changed from 'detect' to 'silence'. Publishing last detected items (if not sent).")
+                                        # Gửi MQTT thông tin sản phẩm vừa quét xong để hiển thị LCD
+                                        for label, quantity in current_scanning.items():
+                                            try:
+                                                product_db = crud_products.get_product_by_code(db=db, code=label)
+                                                if product_db:
+                                                    payload = {
+                                                        "label": product_db.code,
+                                                        "price": product_db.price,
+                                                        "quantity": quantity
+                                                    }
+                                                    mqtt_client.publish("pbl6/products", json.dumps(payload))
+                                                    # print(f"[MQTT] Published Product to pbl6/products: {payload}")
+                                            except Exception as e:
+                                                print(f"[ERROR] MQTT Publish failed: {e}")
+                                    # else: print(f"[SCAN] IGNORED (Too few frames: {len(batch_frame_counters)})")
+                                    
+                                    current_scanning.clear()
 
-                        # Publish info từ representative frame cuối của detect-segment cuối
-                        if representative_frames:
-                            target_frame = representative_frames[-1]
-                            rep_idx = target_frame.get("rep_index")
-                            if rep_idx is not None and rep_idx not in sent_rep_indices:
-                                labels_in_frame = target_frame.get("representative_labels", [])
-                                for item in labels_in_frame:
-                                    product_code = item.get("label")
-                                    quantity = item.get("quantity")
-                                    if product_code:
-                                        product_db = crud_products.get_product_by_code(db=db_session, code=product_code)
-                                        if product_db:
-                                            payload = {
-                                                "label": product_db.code,
-                                                "price": product_db.price,
-                                                "quantity": quantity
-                                            }
-                                            mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
-                                            print(f"[MQTT] Published on state change: {payload}")
-                                sent_rep_indices.add(rep_idx)
+                                state = ScanState.IDLE
+                                batch_frame_counters.clear()
 
-                    # Update the state for the next iteration
-                    was_detecting = is_detecting
+                    # 3. Chuẩn bị dữ liệu trả về client
+                    # Tổng hợp = Đã quét xong (session_total) + Đang quét (current_scanning)
+                    display_counter = session_total + Counter(current_scanning)
+                    
+                    total_labels_array = [
+                        {"label": lbl, "quantity": qty} 
+                        for lbl, qty in display_counter.items()
+                    ]
 
-                except Exception as e:
-                    print(f"[ERROR] Failed during MQTT publish process: {e}")
-
-                yield "data: " + json.dumps({
-                    "merged_segments": merged_segments,
-                    "representative_frames": representative_frames,
-                    "total_labels_array": total_labels_array,
-                    "decreasing_info": decreasing_info
-                }) + "\n\n"
+                    yield "data: " + json.dumps({
+                        "merged_segments": None,
+                        "representative_frames": None,
+                        "total_labels_array": total_labels_array,
+                        "decreasing_info": {'has_decreasing_trend': False, 'target_rep_index': None}
+                    }) + "\n\n"
+            except Exception as e:
+                print(f"[ERROR] in product_feed stream: {e}")
 
     return StreamingResponse(merge_label_generate(buffer, lock, db), media_type="text/event-stream")
 @router.get("/product_feedd")

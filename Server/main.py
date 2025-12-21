@@ -16,6 +16,7 @@ from app.routers import users, categories, order_details, products, orders, auth
 from collections import Counter
 import asyncio
 import json
+import paho.mqtt.client as mqtt
 
 # ============================================================
 # 🧩 1. MJPEG STREAM GENERATOR
@@ -92,7 +93,8 @@ def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detect
 
     # Cấu hình: resize để tăng tốc
     TARGET_SIZE = (640, 640)
-    MIN_INTERVAL = 1 / 30  # tối đa 30fps inference
+    target_fps = 3
+    MIN_INTERVAL = 1 / target_fps  
 
     while not stop_event.is_set():
         loop_start = time.time()
@@ -143,9 +145,10 @@ def yolo_detect_loop(stop_event, raw_frame_buffer, detected_frame_buffer, detect
 
         cv2.putText(annotated_frame, f"FPS: {int(fps)}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
+        annotated_size = cv2.resize(annotated_frame, (320,320))
+        annotated_size = cv2.resize(annotated_size, TARGET_SIZE)
         # --- Mã hóa lại để stream ---
-        success, encoded = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+        success, encoded = cv2.imencode('.jpg', annotated_size, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
         if success:
             with frame_lock_detect:
                 detected_frame_buffer.value = encoded.tobytes()
@@ -196,6 +199,20 @@ if __name__ == "__main__":
     app.state.frame_lock_detect = frame_lock_detect
     app.state.detected_labels_history = detected_labels_history
     app.state.detected_labels_lock = detected_labels_lock
+
+    # 4.3b MQTT Setup (Shared)
+    MQTT_BROKER = "broker.hivemq.com"
+    MQTT_PORT = 1883
+    mqtt_client = mqtt.Client()
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("[MQTT MAIN] Connected successfully to broker.")
+        else:
+            print(f"[MQTT MAIN] Failed to connect, return code {rc}")
+    mqtt_client.on_connect = on_connect
+    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    mqtt_client.loop_start()
+    app.state.mqtt_client = mqtt_client
 
     # CORS
     origins = ["http://localhost:3000"]
