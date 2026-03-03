@@ -157,5 +157,7 @@ https://github.com/QuangNTrex/PBL6_Web
 ## 9. Thông tin dự án
 
 Dự án được thực hiện trong khuôn khổ học phần PBL6 với mục tiêu nghiên cứu và ứng dụng AI trong lĩnh vực bán lẻ thông minh.
+Nguồn dữ liệu: https://universe.roboflow.com/lac-nguyen/vietnamese-productions-classification/dataset/21
+
 
 
